@@ -4,6 +4,8 @@
 Generate uniquely styled Skill descriptions in one click, and say goodbye to generic AI boilerplate text!
 Comes with **17 distinctive UI styles** and supports **10 major application frameworks**. Unleash your interface creativity and maximize the expressive power of your app framework.
 
+🔗 Demo：https://lightlytech.github.io/All-UI-Styles-Application-Skill-Generator/
+
 ![Preview](2.png)
 
 ## 📌 About This Project
