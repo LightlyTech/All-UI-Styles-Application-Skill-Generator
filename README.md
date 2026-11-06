@@ -6,11 +6,11 @@ Comes with **17 distinctive UI styles** and supports **10 major application fram
 
 🔗 Address：https://lightlytech.github.io/All-UI-Styles-Application-Skill-Generator/
 
-![Preview](2.png)
-
 ## 📌 About This Project
 Tired of bland, AI-stereotyped prompt texts and Skill files?
 This generator quickly produces polished `Skill.md` with strong visual personalities. With simple configuration, you can swap visual paradigms and craft custom interface specifications.
+
+![Preview](2.png)
 
 ## 🚀 Key Features
 - ✅ **Rich UI Style Library**: 17 differentiated UI styles, ranging from minimalism and skeuomorphism to retro and modern aesthetics
