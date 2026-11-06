@@ -1,0 +1,3844 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>All UI Styles Application Skill Generator</title>
+<style>
+/* ---------- 主题令牌 ---------- */
+:root {
+  --font: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --mono: "Cascadia Code", "Consolas", "Courier New", monospace;
+  --ease: cubic-bezier(.2, 0, 0, 1);
+}
+
+html[data-theme="light"] {
+  --bg: #F3F3F3;
+  --card: rgba(255, 255, 255, .72);
+  --card-solid: #FFFFFF;
+  --text: #1A1A1A;
+  --text-2: #616161;
+  --text-3: #8A8A8A;
+  --stroke: rgba(0, 0, 0, .06);
+  --stroke-strong: rgba(0, 0, 0, .11);
+  --accent: #0067C0;
+  --accent-text: #FFFFFF;
+  --accent-soft: rgba(0, 103, 192, .10);
+  --hover: rgba(0, 0, 0, .037);
+  --pressed: rgba(0, 0, 0, .074);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 2px 8px rgba(0, 0, 0, .045);
+  --code-bg: #FFFFFF;
+  --sel: rgba(0, 103, 192, .20);
+  --thumb: rgba(0, 0, 0, .22);
+  --tb-hover: rgba(0, 0, 0, .045);
+}
+
+html[data-theme="dark"] {
+  --bg: #202020;
+  --card: rgba(255, 255, 255, .045);
+  --card-solid: #2B2B2B;
+  --text: #FFFFFF;
+  --text-2: #C8C8C8;
+  --text-3: #9A9A9A;
+  --stroke: rgba(255, 255, 255, .06);
+  --stroke-strong: rgba(255, 255, 255, .11);
+  --accent: #60CDFF;
+  --accent-text: #00334D;
+  --accent-soft: rgba(96, 205, 255, .12);
+  --hover: rgba(255, 255, 255, .055);
+  --pressed: rgba(255, 255, 255, .09);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .20), 0 2px 8px rgba(0, 0, 0, .22);
+  --code-bg: rgba(255, 255, 255, .04);
+  --sel: rgba(96, 205, 255, .26);
+  --thumb: rgba(255, 255, 255, .22);
+  --tb-hover: rgba(255, 255, 255, .06);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  user-select: none;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+::selection { background: var(--sel); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+::-webkit-scrollbar-track { background: transparent; }
+
+button { font: inherit; color: inherit; }
+
+.hidden { display: none !important; }
+
+/* ---------- 布局 ---------- */
+.app { height: 100%; display: flex; flex-direction: column; }
+
+.app.revealed { animation: fadeIn .3s var(--ease); }
+
+.titlebar {
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 0 14px;
+}
+
+.app.revealed .titlebar { animation: fadeIn .34s var(--ease); }
+
+.titlebar-drag {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+
+.logo { color: var(--accent); display: flex; align-items: center; }
+
+.app-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-sub {
+  font-size: 11.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.titlebar-actions { display: flex; align-items: center; gap: 2px; }
+
+.tb-sep { width: 1px; height: 16px; background: var(--stroke-strong); margin: 0 6px; }
+
+.tb-btn {
+  width: 40px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color .12s var(--ease), color .12s var(--ease);
+}
+
+.tb-btn:hover { background: var(--tb-hover); color: var(--text); }
+.tb-btn:active { background: var(--pressed); }
+
+.tb-close:hover { background: #C42B1C; color: #FFFFFF; }
+.tb-close:active { background: #B02316; color: #FFFFFF; }
+
+.lang-select {
+  height: 30px;
+  max-width: 120px;
+  padding: 0 8px;
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color .12s var(--ease), color .12s var(--ease), border-color .12s var(--ease);
+}
+
+.lang-select:hover { background: var(--tb-hover); color: var(--text); }
+.lang-select:focus-visible { border-color: var(--accent); }
+.lang-select option { background: var(--card-solid); color: var(--text); }
+
+.body { flex: 1; display: flex; min-height: 0; }
+
+.sidebar {
+  width: 326px;
+  flex: 0 0 326px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 14px 12px 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app.revealed .sidebar { animation: rise .4s var(--ease) .04s both; }
+
+.sidebar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 11px 12px;
+  transition: background-color .25s ease, border-color .25s ease;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  padding: 0 2px 8px;
+  letter-spacing: .01em;
+}
+
+.hint { font-size: 11px; font-weight: 400; color: var(--text-3); }
+
+.style-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 46vh;
+  overflow-y: auto;
+  margin: 0 -4px;
+  padding: 2px 4px;
+}
+
+.style-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .12s var(--ease), border-color .12s var(--ease);
+}
+
+.style-item:hover { background: var(--hover); }
+.style-item.active { background: var(--accent-soft); border-color: var(--accent); }
+
+.style-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+
+.style-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.style-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swatches { display: flex; gap: 4px; flex: 0 0 auto; }
+
+.swatches i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--stroke-strong);
+  display: block;
+}
+
+.fw-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.fw-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+.fw-item {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--stroke);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background-color .12s var(--ease), border-color .12s var(--ease), color .12s var(--ease);
+}
+
+.fw-item:hover { background: var(--hover); color: var(--text); }
+.fw-item.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.file-name {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 8px 10px;
+  word-break: break-all;
+  user-select: text;
+}
+
+/* ---------- How to use / About ---------- */
+.sidebar-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.how-btn {
+  flex: 0 0 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text-2);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background-color .12s var(--ease), color .12s var(--ease), transform .12s var(--ease);
+}
+
+.how-btn:hover { background: var(--hover); color: var(--text); }
+.how-btn:active { background: var(--pressed); transform: translateY(.5px); }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, .32);
+  animation: fadeIn .16s var(--ease);
+}
+
+html[data-theme="dark"] .modal-backdrop { background: rgba(0, 0, 0, .52); }
+
+.modal {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--card-solid);
+  border: 1px solid var(--stroke-strong);
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, .28);
+  animation: modalIn .2s var(--ease);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 10px 12px 20px;
+  border-bottom: 1px solid var(--stroke);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+.modal-intro {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
+.modal-steps {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.modal-steps li { margin: 6px 0; }
+.modal-steps li::marker { color: var(--accent); font-weight: 600; }
+
+.modal-note {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  background: var(--hover);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-3);
+}
+
+.modal-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+.modal-meta {
+  margin: 16px 0 0;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 8px 12px;
+  font-size: 12.5px;
+}
+
+.modal-meta dt { color: var(--text-3); }
+.modal-meta dd { margin: 0; color: var(--text); }
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid var(--stroke);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px) scale(.99); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- 预览区 ---------- */
+.preview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 16px 16px 0;
+}
+
+.app.revealed .preview { animation: rise .4s var(--ease) .1s both; }
+
+.preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 0 0 10px;
+}
+
+.tabs {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 2px;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+}
+
+.tab {
+  height: 26px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .12s var(--ease), color .12s var(--ease);
+}
+
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--card-solid); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, .10); }
+
+.actions { display: flex; flex: 0 0 auto; gap: 8px; }
+
+.btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .12s var(--ease), filter .12s var(--ease), transform .12s var(--ease);
+}
+
+.btn:hover { background: var(--hover); }
+.btn:active { background: var(--pressed); transform: translateY(.5px); }
+
+.btn.primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.btn.primary:hover { filter: brightness(1.07); background: var(--accent); }
+.btn.primary:active { filter: brightness(.95); background: var(--accent); }
+
+.preview-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: background-color .25s ease, border-color .25s ease;
+}
+
+.preview-scroll { flex: 1; min-width: 0; overflow: auto; }
+
+/* ---------- 风格示例框 ---------- */
+.sample-box {
+  flex: 0 0 auto;
+  margin: 0 0 10px;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: background-color .25s ease, border-color .25s ease;
+}
+
+.sample-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+}
+
+.sample-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.sample-meta { display: flex; align-items: center; gap: 6px; min-width: 0; }
+
+.sample-hint {
+  font-size: 11.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sample-toggle {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color .12s var(--ease), color .12s var(--ease);
+}
+
+.sample-toggle:hover { background: var(--hover); color: var(--text); }
+.sample-toggle:active { background: var(--pressed); }
+.sample-toggle svg { transition: transform .15s var(--ease); }
+.sample-box.collapsed .sample-toggle svg { transform: rotate(-90deg); }
+
+.sample-frame-wrap {
+  height: 210px;
+  border-top: 1px solid var(--stroke);
+  background: var(--bg);
+  transition: background-color .25s ease;
+}
+
+.sample-box.collapsed .sample-frame-wrap { display: none; }
+
+.sample-frame { display: block; width: 100%; height: 100%; border: 0; }
+
+/* ---------- Markdown 渲染 ---------- */
+.md {
+  max-width: 900px;
+  padding: 20px 26px 48px;
+  font-size: 14px;
+  line-height: 1.68;
+  user-select: text;
+  animation: fadeIn .22s var(--ease);
+}
+
+.md h1 {
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  margin: 8px 0 14px;
+}
+
+.md h2 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 30px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--stroke-strong);
+}
+
+.md h3 { font-size: 15.5px; font-weight: 600; margin: 22px 0 8px; }
+.md h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--text-2); }
+
+.md p { margin: 8px 0; }
+.md ul, .md ol { margin: 8px 0; padding-left: 24px; }
+.md li { margin: 4px 0; }
+.md li::marker { color: var(--text-3); }
+
+.md code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--hover);
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+  padding: 1px 5px;
+  word-break: break-word;
+}
+
+.md pre {
+  background: var(--code-bg);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow: auto;
+  margin: 12px 0;
+}
+
+.md pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 12.5px;
+  line-height: 1.62;
+  white-space: pre;
+}
+
+.md table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+  font-size: 12.8px;
+  display: block;
+  overflow: auto;
+}
+
+.md th, .md td {
+  border: 1px solid var(--stroke-strong);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.md th { background: var(--hover); font-weight: 600; white-space: nowrap; }
+.md tr:nth-child(2n) td { background: rgba(127, 127, 127, .035); }
+
+.md blockquote {
+  margin: 12px 0;
+  padding: 2px 14px;
+  border-left: 3px solid var(--accent);
+  color: var(--text-2);
+}
+
+.md hr { border: 0; border-top: 1px solid var(--stroke-strong); margin: 20px 0; }
+.md a { color: var(--accent); text-decoration: none; }
+.md a:hover { text-decoration: underline; }
+
+.md li.task { list-style: none; margin-left: -18px; display: flex; align-items: flex-start; gap: 8px; }
+
+.md .box {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: 3px;
+  background: var(--card-solid);
+  position: relative;
+}
+
+.md .box.checked { background: var(--accent); border-color: var(--accent); }
+.md .box.checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--accent-text);
+  border-width: 0 2px 2px 0;
+  transform: rotate(42deg);
+}
+
+.md .fm {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 8px;
+  background: var(--hover);
+  padding: 10px 14px;
+  margin: 4px 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.md .fm-row { display: flex; gap: 10px; }
+.md .fm-key { color: var(--text-3); flex: 0 0 84px; font-family: var(--mono); font-size: 12px; }
+.md .fm-val { color: var(--text-2); word-break: break-word; }
+
+/* ---------- 源码视图 ---------- */
+.source {
+  margin: 0;
+  padding: 20px 26px 48px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.66;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+  animation: fadeIn .22s var(--ease);
+}
+
+/* ---------- Toast ---------- */
+.toast-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--card-solid);
+  border: 1px solid var(--stroke-strong);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+  font-size: 13px;
+  color: var(--text);
+  animation: toastIn .22s var(--ease);
+  transition: opacity .22s var(--ease), transform .22s var(--ease);
+}
+
+.toast::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.toast.error::before { background: #C42B1C; }
+
+/* ---------- 动效 ---------- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="titlebar">
+    <div class="titlebar-drag" id="dragArea">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="3.5" width="19" height="17" rx="4.5" />
+          <path d="M6 15.4 9.4 8.6l3 4.9 2-3 3.4 4.9" />
+        </svg>
+      </span>
+      <span class="app-title">All UI Styles Application Skill Generator</span>
+      <span class="app-sub" data-i18n="appSub">Skill Document Generator</span>
+    </div>
+    <div class="titlebar-actions">
+      <select class="lang-select" id="langSelect" data-i18n-title="language" title="Language"></select>
+      <button class="tb-btn" id="themeBtn" title="Switch theme"></button>
+      <span class="tb-sep"></span>
+      <button class="tb-btn" id="minBtn" data-i18n-title="minimize" title="Minimize">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2 6h8" /></svg>
+      </button>
+      <button class="tb-btn" id="maxBtn" data-i18n-title="maximize" title="Maximize">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="2.4" y="2.4" width="7.2" height="7.2" rx="1" /></svg>
+      </button>
+      <button class="tb-btn tb-close" id="closeBtn" data-i18n-title="close" title="Close">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2.6 2.6l6.8 6.8M9.4 2.6L2.6 9.4" /></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="sidebar-scroll">
+        <section class="panel">
+          <div class="panel-head"><span data-i18n="styles">UI style</span><span class="hint" id="styleHint"></span></div>
+          <div class="style-list" id="styleList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><span data-i18n="frameworks">Framework</span><span class="hint" id="fwHint"></span></div>
+          <div class="fw-list" id="fwList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><span data-i18n="outputFile">Output file</span></div>
+          <div class="file-name" id="fileName">-</div>
+        </section>
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="how-btn" id="howBtn">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+            <path d="M8 4.3C6.6 3.4 4.9 3.2 2.7 3.2v9.4c2.2 0 3.9.2 5.3 1.1 1.4-.9 3.1-1.1 5.3-1.1V3.2c-2.2 0-3.9.2-5.3 1.1z" />
+            <path d="M8 4.3v9.4" />
+          </svg>
+          <span data-i18n="howToUse">How to use</span>
+        </button>
+        <button class="how-btn" id="aboutBtn">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <circle cx="8" cy="8" r="6.2" />
+            <path d="M8 7.2v4" />
+            <circle cx="8" cy="4.9" r="0.7" fill="currentColor" stroke="none" />
+          </svg>
+          <span>About</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="preview">
+      <div class="preview-head">
+        <div class="tabs">
+          <button class="tab active" data-tab="preview" data-i18n="tabPreview">Preview</button>
+          <button class="tab" data-tab="source" data-i18n="tabSource">Markdown</button>
+        </div>
+        <div class="actions">
+          <button class="btn" id="regenBtn" data-i18n="regen">Regenerate</button>
+          <button class="btn" id="copyBtn" data-i18n="copy">Copy Markdown</button>
+          <button class="btn primary" id="saveBtn" hidden data-i18n="saveAs">Save as…</button>
+        </div>
+      </div>
+
+      <section class="sample-box" id="sampleBox">
+        <div class="sample-head">
+          <span class="sample-title" data-i18n="sampleTitle">Style sample</span>
+          <div class="sample-meta">
+            <span class="sample-hint" id="sampleHint"></span>
+            <button class="sample-toggle" id="sampleToggle" data-i18n-title="sampleToggle" title="Collapse or expand the sample" aria-expanded="true">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 4.4L6 7.8l3.4-3.4" /></svg>
+            </button>
+          </div>
+        </div>
+        <div class="sample-frame-wrap">
+          <iframe class="sample-frame" id="sampleFrame" title="UI style sample"></iframe>
+        </div>
+      </section>
+
+      <div class="preview-body">
+        <div class="preview-scroll" id="previewPane">
+          <div class="md" id="mdView"></div>
+        </div>
+        <div class="preview-scroll hidden" id="sourcePane">
+          <pre class="source" id="mdSource"></pre>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="modal-backdrop hidden" id="howOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+      <div class="modal-head">
+        <span id="howTitle" data-i18n="howTitle">How to use the generated skill.md</span>
+        <button class="tb-btn" id="howCloseBtn" data-i18n-title="close" title="Close">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2.6 2.6l6.8 6.8M9.4 2.6L2.6 9.4" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro" data-i18n="howIntro">The generated file is a skill document. Give it to your AI coding assistant so it can build a complete, runnable project in the selected style and framework.</p>
+        <ol class="modal-steps">
+          <li data-i18n="howStep1">Choose a UI style and framework, then save the generated .md file.</li>
+          <li data-i18n="howStep2">Put the file into your assistant skills folder, or attach it to the conversation.</li>
+          <li data-i18n="howStep3">Typical locations: ~/.claude/skills/&lt;name&gt;/SKILL.md, .trae/skills/&lt;name&gt;/SKILL.md, or any folder your agent scans.</li>
+          <li data-i18n="howStep4">Mention the skill in your prompt, for example "use the material-wpf-app skill to build a settings window".</li>
+          <li data-i18n="howStep5">The assistant follows the document and outputs the full project: every file, string boundaries, design tokens, and packaging commands.</li>
+        </ol>
+        <p class="modal-note" data-i18n="howNote">Note: the document body stays in English on purpose; this interface follows your language. Changing the style or framework also changes the exported file name.</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn primary" id="howOkBtn" data-i18n="ok">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="aboutOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="modal-head">
+        <span id="aboutTitle">About</span>
+        <button class="tb-btn" id="aboutCloseBtn" title="Close">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M2.6 2.6l6.8 6.8M9.4 2.6L2.6 9.4" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 class="modal-title">Liberate the UI framework ability of your APP!</h3>
+        <p class="modal-text">All UI Styles Application Skill Generator turns a design language and a host framework into a ready-to-use skill document for AI coding assistants. Choose from 17 UI styles and 8 frameworks, preview the generated Markdown, then copy or save it. The document keeps the structure of the original skill and rewrites its design tokens, framework integration, string boundaries, and packaging steps, so an assistant can produce complete, runnable projects. Built with WPF and WebView2 in the Windows 11 Fluent style.</p>
+        <dl class="modal-meta">
+          <dt>Version</dt>
+          <dd>1.0.2</dd>
+          <dt>Author</dt>
+          <dd>LightlyTech</dd>
+        </dl>
+      </div>
+      <div class="modal-foot">
+        <button class="btn primary" id="aboutOkBtn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------- 与宿主通信 ---------------- */
+  var host = (window.chrome && window.chrome.webview) ? window.chrome.webview : null;
+
+  function post(message) {
+    if (host) {
+      host.postMessage(message);
+    }
+  }
+
+  /* ---------------- 界面多语言（生成的 md 始终为英文） ---------------- */
+  var I18N = {
+    'zh-CN': {
+      appSub: '技能文档生成器',
+      language: '语言',
+      themeDark: '切换到深色',
+      themeLight: '切换到浅色',
+      minimize: '最小化',
+      maximize: '最大化',
+      restore: '还原',
+      close: '关闭',
+      styles: 'UI 风格',
+      frameworks: '应用框架',
+      outputFile: '输出文件',
+      count: '{n} 种',
+      tabPreview: '预览',
+      tabSource: 'Markdown',
+      sampleTitle: '风格示例',
+      sampleToggle: '收起或展开示例',
+      regen: '重新生成',
+      copy: '复制 Markdown',
+      saveAs: '另存为…',
+      toastRegen: '已按当前配置重新生成',
+      toastNoHost: '未检测到应用宿主，仅预览模式',
+      howToUse: '使用说明',
+      howTitle: '如何使用生成的 skill.md',
+      howIntro: '生成的文件是一份技能文档。把它交给 AI 编程助手，助手就能按所选风格与框架输出完整可运行的工程。',
+      howStep1: '选择 UI 风格与框架，然后「另存为…」导出生成的 .md 文件。',
+      howStep2: '把文件放进助手的 skills 目录，或直接作为附件发给对话。',
+      howStep3: '常见位置：~/.claude/skills/<name>/SKILL.md、.trae/skills/<name>/SKILL.md，或助手会扫描的任意目录。',
+      howStep4: '在提示里点名该技能，例如「用 material-wpf-app 技能做一个设置窗口」。',
+      howStep5: '助手会依据文档输出完整工程：全部文件、字符串边界写法、设计令牌与打包命令。',
+      howNote: '说明：文档正文固定为英文，界面语言只影响本工具；切换风格或框架后，导出的文件名会随之变化。',
+      ok: '知道了'
+    },
+    'en-US': {
+      appSub: 'Skill Document Generator',
+      language: 'Language',
+      themeDark: 'Switch to dark',
+      themeLight: 'Switch to light',
+      minimize: 'Minimize',
+      maximize: 'Maximize',
+      restore: 'Restore',
+      close: 'Close',
+      styles: 'UI style',
+      frameworks: 'Framework',
+      outputFile: 'Output file',
+      count: '{n}',
+      tabPreview: 'Preview',
+      tabSource: 'Markdown',
+      sampleTitle: 'Style sample',
+      sampleToggle: 'Collapse or expand the sample',
+      regen: 'Regenerate',
+      copy: 'Copy Markdown',
+      saveAs: 'Save as…',
+      toastRegen: 'Regenerated with the current settings',
+      toastNoHost: 'No app host detected - preview only',
+      howToUse: 'How to use',
+      howTitle: 'How to use the generated skill.md',
+      howIntro: 'The generated file is a skill document. Give it to your AI coding assistant so it can build a complete, runnable project in the selected style and framework.',
+      howStep1: 'Choose a UI style and framework, then save the generated .md file.',
+      howStep2: 'Put the file into your assistant skills folder, or attach it to the conversation.',
+      howStep3: 'Typical locations: ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md, or any folder your agent scans.',
+      howStep4: 'Mention the skill in your prompt, for example "use the material-wpf-app skill to build a settings window".',
+      howStep5: 'The assistant follows the document and outputs the full project: every file, string boundaries, design tokens, and packaging commands.',
+      howNote: 'Note: the document body stays in English on purpose; this interface follows your language. Changing the style or framework also changes the exported file name.',
+      ok: 'Got it'
+    },
+    'ja-JP': {
+      appSub: 'スキルドキュメント生成',
+      language: '言語',
+      themeDark: 'ダークに切り替え',
+      themeLight: 'ライトに切り替え',
+      minimize: '最小化',
+      maximize: '最大化',
+      restore: '元に戻す',
+      close: '閉じる',
+      styles: 'UI スタイル',
+      frameworks: 'フレームワーク',
+      outputFile: '出力ファイル',
+      count: '{n} 種類',
+      tabPreview: 'プレビュー',
+      tabSource: 'Markdown',
+      sampleTitle: 'スタイル例',
+      sampleToggle: '例を折りたたむ／展開する',
+      regen: '再生成',
+      copy: 'Markdown をコピー',
+      saveAs: '名前を付けて保存…',
+      toastRegen: '現在の設定で再生成しました',
+      toastNoHost: 'アプリのホストが見つかりません。プレビューのみ',
+      howToUse: '使い方',
+      howTitle: '生成した skill.md の使い方',
+      howIntro: '生成されるファイルはスキルドキュメントです。AI コーディングアシスタントに渡すと、選んだスタイルとフレームワークで完全なプロジェクトを出力します。',
+      howStep1: 'UI スタイルとフレームワークを選び、「名前を付けて保存…」で .md を書き出します。',
+      howStep2: 'アシスタントの skills フォルダーに置くか、会話に添付します。',
+      howStep3: '例: ~/.claude/skills/<name>/SKILL.md、.trae/skills/<name>/SKILL.md、またはエージェントが走査する任意のフォルダー。',
+      howStep4: 'プロンプトでスキルを指定します（例:「material-wpf-app スキルで設定画面を作る」）。',
+      howStep5: 'アシスタントはドキュメントに従い、全ファイル・文字列境界・デザイントークン・パッケージ手順を含む完全なプロジェクトを出力します。',
+      howNote: '補足: ドキュメント本文は英語のままです。UI の言語はこのツールにのみ作用し、スタイルやフレームワークを変えると出力ファイル名も変わります。',
+      ok: '了解'
+    },
+    'ko-KR': {
+      appSub: '스킬 문서 생성기',
+      language: '언어',
+      themeDark: '어둡게 전환',
+      themeLight: '밝게 전환',
+      minimize: '최소화',
+      maximize: '최대화',
+      restore: '이전 크기로',
+      close: '닫기',
+      styles: 'UI 스타일',
+      frameworks: '프레임워크',
+      outputFile: '출력 파일',
+      count: '{n}개',
+      tabPreview: '미리보기',
+      tabSource: 'Markdown',
+      sampleTitle: '스타일 예시',
+      sampleToggle: '예시 접기 또는 펼치기',
+      regen: '다시 생성',
+      copy: 'Markdown 복사',
+      saveAs: '다른 이름으로 저장…',
+      toastRegen: '현재 설정으로 다시 생성했습니다',
+      toastNoHost: '앱 호스트를 찾을 수 없어 미리보기만 표시합니다',
+      howToUse: '사용 방법',
+      howTitle: '생성된 skill.md 사용 방법',
+      howIntro: '생성된 파일은 스킬 문서입니다. AI 코딩 어시스턴트에게 전달하면 선택한 스타일과 프레임워크로 완전한 프로젝트를 만들어 줍니다.',
+      howStep1: 'UI 스타일과 프레임워크를 고른 뒤 ‘다른 이름으로 저장…’으로 .md 파일을 내보냅니다.',
+      howStep2: '어시스턴트의 skills 폴더에 넣거나 대화에 첨부합니다.',
+      howStep3: '예: ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md 또는 에이전트가 스캔하는 임의 폴더.',
+      howStep4: '프롬프트에서 스킬을 지정합니다(예: “material-wpf-app 스킬로 설정 창 만들기”).',
+      howStep5: '어시스턴트는 문서에 따라 모든 파일, 문자열 경계, 디자인 토큰, 패키징 명령을 포함한 완전한 프로젝트를 출력합니다.',
+      howNote: '참고: 문서 본문은 영어로 유지되며, UI 언어는 이 도구에만 적용됩니다. 스타일이나 프레임워크를 바꾸면 출력 파일 이름도 바뀝니다.',
+      ok: '확인'
+    },
+    'de-DE': {
+      appSub: 'Skill-Dokument-Generator',
+      language: 'Sprache',
+      themeDark: 'Zu Dunkel wechseln',
+      themeLight: 'Zu Hell wechseln',
+      minimize: 'Minimieren',
+      maximize: 'Maximieren',
+      restore: 'Wiederherstellen',
+      close: 'Schließen',
+      styles: 'UI-Stil',
+      frameworks: 'Framework',
+      outputFile: 'Ausgabedatei',
+      count: '{n}',
+      tabPreview: 'Vorschau',
+      tabSource: 'Markdown',
+      sampleTitle: 'Stilprobe',
+      sampleToggle: 'Beispiel ein- oder ausklappen',
+      regen: 'Neu erzeugen',
+      copy: 'Markdown kopieren',
+      saveAs: 'Speichern unter…',
+      toastRegen: 'Mit aktuellen Einstellungen neu erzeugt',
+      toastNoHost: 'Kein App-Host gefunden – nur Vorschau',
+      howToUse: 'Anleitung',
+      howTitle: 'So verwendest du die erzeugte skill.md',
+      howIntro: 'Die erzeugte Datei ist ein Skill-Dokument. Gib sie deinem KI-Coding-Assistenten, damit er ein vollständiges Projekt im gewählten Stil und Framework baut.',
+      howStep1: 'UI-Stil und Framework wählen und die erzeugte .md-Datei über „Speichern unter…“ exportieren.',
+      howStep2: 'Die Datei in den skills-Ordner des Assistenten legen oder an die Unterhaltung anhängen.',
+      howStep3: 'Übliche Orte: ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md oder ein beliebiger Ordner, den der Agent durchsucht.',
+      howStep4: 'Nenne den Skill im Prompt, z. B. „mit dem material-wpf-app-Skill ein Einstellungsfenster bauen“.',
+      howStep5: 'Der Assistent liefert laut Dokument das komplette Projekt: alle Dateien, String-Grenzen, Design-Tokens und Paketierungsbefehle.',
+      howNote: 'Hinweis: Der Dokumenttext bleibt bewusst englisch, die Oberfläche folgt deiner Sprache. Ein anderer Stil oder ein anderes Framework ändert auch den Dateinamen.',
+      ok: 'Verstanden'
+    },
+    'fr-FR': {
+      appSub: 'Générateur de Skill',
+      language: 'Langue',
+      themeDark: 'Passer en sombre',
+      themeLight: 'Passer en clair',
+      minimize: 'Réduire',
+      maximize: 'Agrandir',
+      restore: 'Restaurer',
+      close: 'Fermer',
+      styles: 'Style d’UI',
+      frameworks: 'Framework',
+      outputFile: 'Fichier de sortie',
+      count: '{n}',
+      tabPreview: 'Aperçu',
+      tabSource: 'Markdown',
+      sampleTitle: 'Aperçu du style',
+      sampleToggle: 'Réduire ou développer l’aperçu',
+      regen: 'Régénérer',
+      copy: 'Copier le Markdown',
+      saveAs: 'Enregistrer sous…',
+      toastRegen: 'Régénéré avec les paramètres actuels',
+      toastNoHost: 'Aucun hôte détecté - mode aperçu uniquement',
+      howToUse: 'Utilisation',
+      howTitle: 'Utiliser le skill.md généré',
+      howIntro: 'Le fichier généré est un document de skill. Donnez-le à votre assistant de code IA pour qu’il produise un projet complet dans le style et le framework choisis.',
+      howStep1: 'Choisissez un style d’UI et un framework, puis exportez le fichier .md avec « Enregistrer sous… ».',
+      howStep2: 'Placez le fichier dans le dossier skills de l’assistant, ou joignez-le à la conversation.',
+      howStep3: 'Emplacements courants : ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md, ou un dossier analysé par l’agent.',
+      howStep4: 'Nommez le skill dans votre prompt, par ex. « utilise le skill material-wpf-app pour créer une fenêtre de réglages ».',
+      howStep5: 'L’assistant suit le document et produit le projet complet : tous les fichiers, les limites de chaînes, les tokens de design et les commandes de packaging.',
+      howNote: 'Remarque : le corps du document reste en anglais, seule l’interface suit votre langue. Changer de style ou de framework change aussi le nom du fichier exporté.',
+      ok: 'Compris'
+    },
+    'es-ES': {
+      appSub: 'Generador de Skill',
+      language: 'Idioma',
+      themeDark: 'Cambiar a oscuro',
+      themeLight: 'Cambiar a claro',
+      minimize: 'Minimizar',
+      maximize: 'Maximizar',
+      restore: 'Restaurar',
+      close: 'Cerrar',
+      styles: 'Estilo de UI',
+      frameworks: 'Framework',
+      outputFile: 'Archivo de salida',
+      count: '{n}',
+      tabPreview: 'Vista previa',
+      tabSource: 'Markdown',
+      sampleTitle: 'Muestra de estilo',
+      sampleToggle: 'Contraer o expandir la muestra',
+      regen: 'Regenerar',
+      copy: 'Copiar Markdown',
+      saveAs: 'Guardar como…',
+      toastRegen: 'Regenerado con la configuración actual',
+      toastNoHost: 'No se detectó el host: solo vista previa',
+      howToUse: 'Cómo usar',
+      howTitle: 'Cómo usar el skill.md generado',
+      howIntro: 'El archivo generado es un documento de skill. Pásaselo a tu asistente de código con IA para que cree un proyecto completo con el estilo y el framework elegidos.',
+      howStep1: 'Elige un estilo de UI y un framework, y exporta el archivo .md con «Guardar como…».',
+      howStep2: 'Coloca el archivo en la carpeta skills del asistente o adjúntalo a la conversación.',
+      howStep3: 'Ubicaciones habituales: ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md o cualquier carpeta que escanee el agente.',
+      howStep4: 'Nombra el skill en el prompt, p. ej. «usa el skill material-wpf-app para crear una ventana de ajustes».',
+      howStep5: 'El asistente sigue el documento y entrega el proyecto completo: todos los archivos, límites de cadenas, tokens de diseño y comandos de empaquetado.',
+      howNote: 'Nota: el cuerpo del documento se mantiene en inglés; el idioma solo afecta a esta interfaz. Cambiar de estilo o framework cambia también el nombre del archivo exportado.',
+      ok: 'Entendido'
+    },
+    'ru-RU': {
+      appSub: 'Генератор Skill',
+      language: 'Язык',
+      themeDark: 'Тёмная тема',
+      themeLight: 'Светлая тема',
+      minimize: 'Свернуть',
+      maximize: 'Развернуть',
+      restore: 'Восстановить',
+      close: 'Закрыть',
+      styles: 'Стиль UI',
+      frameworks: 'Фреймворк',
+      outputFile: 'Файл результата',
+      count: '{n}',
+      tabPreview: 'Просмотр',
+      tabSource: 'Markdown',
+      sampleTitle: 'Пример стиля',
+      sampleToggle: 'Свернуть или развернуть пример',
+      regen: 'Создать заново',
+      copy: 'Копировать Markdown',
+      saveAs: 'Сохранить как…',
+      toastRegen: 'Создано заново с текущими настройками',
+      toastNoHost: 'Хост приложения не найден — только просмотр',
+      howToUse: 'Как использовать',
+      howTitle: 'Как использовать созданный skill.md',
+      howIntro: 'Созданный файл — это документ навыка. Передайте его ИИ-ассистенту, чтобы он собрал полный проект в выбранном стиле и фреймворке.',
+      howStep1: 'Выберите стиль UI и фреймворк, затем экспортируйте файл .md через «Сохранить как…».',
+      howStep2: 'Поместите файл в папку skills ассистента или прикрепите его к диалогу.',
+      howStep3: 'Типичные пути: ~/.claude/skills/<name>/SKILL.md, .trae/skills/<name>/SKILL.md или любая папка, которую сканирует агент.',
+      howStep4: 'Укажите навык в запросе, например: «используй skill material-wpf-app, чтобы сделать окно настроек».',
+      howStep5: 'Ассистент по документу выдаст полный проект: все файлы, границы строк, токены дизайна и команды упаковки.',
+      howNote: 'Примечание: текст документа остаётся на английском, язык влияет только на интерфейс. Смена стиля или фреймворка меняет и имя экспортируемого файла.',
+      ok: 'Понятно'
+    }
+  };
+
+  var LANGUAGES = [
+    ['en-US', 'English'],
+    ['zh-CN', '简体中文'],
+    ['ja-JP', '日本語'],
+    ['ko-KR', '한국어'],
+    ['de-DE', 'Deutsch'],
+    ['fr-FR', 'Français'],
+    ['es-ES', 'Español'],
+    ['ru-RU', 'Русский']
+  ];
+
+  var language = 'en-US';
+
+  // UI 风格列表里的简介小字：只翻译 “·” 之后的描述部分
+  var VENDOR_TAGS = {
+    'Low contrast': { 'zh-CN': '低对比', 'ja-JP': '低コントラスト', 'ko-KR': '저대비', 'de-DE': 'Wenig Kontrast', 'fr-FR': 'Faible contraste', 'es-ES': 'Bajo contraste', 'ru-RU': 'Низкий контраст' },
+    'Web utility': { 'zh-CN': '网页工具', 'ja-JP': 'Web ユーティリティ', 'ko-KR': '웹 유틸리티', 'de-DE': 'Web-Werkzeug', 'fr-FR': 'Utilitaire web', 'es-ES': 'Utilidad web', 'ru-RU': 'Веб-утилита' },
+    'Product UI': { 'zh-CN': '产品界面', 'ja-JP': 'プロダクト UI', 'ko-KR': '제품 UI', 'de-DE': 'Produkt-UI', 'fr-FR': 'UI produit', 'es-ES': 'UI de producto', 'ru-RU': 'Интерфейс продукта' },
+    'Vibrant backdrop': { 'zh-CN': '炫彩背景', 'ja-JP': '鮮やかな背景', 'ko-KR': '선명한 배경', 'de-DE': 'Leuchtender Hintergrund', 'fr-FR': 'Fond éclatant', 'es-ES': 'Fondo vibrante', 'ru-RU': 'Яркий фон' },
+    'Zero ornament': { 'zh-CN': '零装饰', 'ja-JP': '装飾ゼロ', 'ko-KR': '무장식', 'de-DE': 'Ohne Ornament', 'fr-FR': 'Sans ornement', 'es-ES': 'Sin ornamentos', 'ru-RU': 'Без декора' },
+    'Real-world metaphors': { 'zh-CN': '真实事物隐喻', 'ja-JP': '実世界のメタファー', 'ko-KR': '실물 메타포', 'de-DE': 'Reale Metaphern', 'fr-FR': 'Métaphores réelles', 'es-ES': 'Metáforas reales', 'ru-RU': 'Реальные метафоры' },
+    'Night city': { 'zh-CN': '夜之城', 'ja-JP': 'ナイトシティ', 'ko-KR': '나이트 시티', 'de-DE': 'Nachtstadt', 'fr-FR': 'Ville de nuit', 'es-ES': 'Ciudad nocturna', 'ru-RU': 'Ночной город' },
+    'Dense data': { 'zh-CN': '高密度数据', 'ja-JP': '高密度データ', 'ko-KR': '고밀도 데이터', 'de-DE': 'Dichte Daten', 'fr-FR': 'Données denses', 'es-ES': 'Datos densos', 'ru-RU': 'Плотные данные' },
+    'Pixel perfect': { 'zh-CN': '像素级精确', 'ja-JP': 'ピクセル精度', 'ko-KR': '픽셀 퍼펙트', 'de-DE': 'Pixelgenau', 'fr-FR': 'Au pixel près', 'es-ES': 'Píxel perfecto', 'ru-RU': 'Пиксельная точность' },
+    'Calm': { 'zh-CN': '温暖沉静', 'ja-JP': '穏やか', 'ko-KR': '차분함', 'de-DE': 'Ruhig', 'fr-FR': 'Apaisé', 'es-ES': 'Calma', 'ru-RU': 'Спокойствие' },
+    'Monospace': { 'zh-CN': '等宽字体', 'ja-JP': '等幅フォント', 'ko-KR': '고정폭', 'de-DE': 'Monospace', 'fr-FR': 'Monospace', 'es-ES': 'Monoespaciada', 'ru-RU': 'Моноширинный' },
+    'Analog gauges': { 'zh-CN': '模拟仪表', 'ja-JP': 'アナログ計器', 'ko-KR': '아날로그 계기', 'de-DE': 'Analoge Anzeigen', 'fr-FR': 'Cadrans analogiques', 'es-ES': 'Indicadores analógicos', 'ru-RU': 'Аналоговые приборы' },
+    'Enterprise': { 'zh-CN': '企业级', 'ja-JP': 'エンタープライズ', 'ko-KR': '엔터프라이즈', 'de-DE': 'Enterprise', 'fr-FR': 'Entreprise', 'es-ES': 'Empresa', 'ru-RU': 'Корпоративный' }
+  };
+
+  function styleVendor(style) {
+    var parts = style.vendor.split('·');
+    if (parts.length < 2) {
+      return style.vendor;
+    }
+
+    var brand = parts[0].trim();
+    var tag = parts.slice(1).join('·').trim();
+    var translations = VENDOR_TAGS[tag];
+    var localized = translations && translations[language];
+    return brand + ' · ' + (localized || tag);
+  }
+
+  function t(key, vars) {
+    var dict = I18N[language] || I18N['en-US'];
+    var value = dict[key];
+    if (value === undefined) {
+      value = I18N['en-US'][key];
+    }
+    if (value === undefined) {
+      return key;
+    }
+    if (vars) {
+      Object.keys(vars).forEach(function (name) {
+        value = value.split('{' + name + '}').join(vars[name]);
+      });
+    }
+    return value;
+  }
+
+  /* ---------------- 风格数据 ---------------- */
+  var STYLES = [
+    {
+      key: 'fluent',
+      file: 'Fluent',
+      name: 'Windows 11 Fluent',
+      short: 'Fluent',
+      vendor: 'Microsoft · Windows 11',
+      swatch: ['#0067C0', '#F3F3F3', '#202020'],
+      font: '"Segoe UI Variable Text", "Segoe UI",\n             "Microsoft YaHei UI", "Microsoft YaHei",\n             system-ui, -apple-system, sans-serif',
+      mono: '"Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#F3F3F3'],
+          ['Card', 'rgba(255,255,255,0.72)'],
+          ['Primary text', '#1A1A1A'],
+          ['Secondary text', '#616161'],
+          ['Tertiary text', '#8A8A8A'],
+          ['Stroke', 'rgba(0,0,0,0.06)'],
+          ['Strong stroke', 'rgba(0,0,0,0.11)'],
+          ['Accent', '#0067C0'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(0,0,0,0.037)'],
+          ['Pressed', 'rgba(0,0,0,0.074)']
+        ],
+        dark: [
+          ['Background', '#202020'],
+          ['Card', 'rgba(255,255,255,0.045)'],
+          ['Primary text', '#FFFFFF'],
+          ['Secondary text', '#C8C8C8'],
+          ['Tertiary text', '#9A9A9A'],
+          ['Stroke', 'rgba(255,255,255,0.06)'],
+          ['Strong stroke', 'rgba(255,255,255,0.11)'],
+          ['Accent', '#60CDFF'],
+          ['Accent text', '#00334D'],
+          ['Hover', 'rgba(255,255,255,0.055)'],
+          ['Pressed', 'rgba(255,255,255,0.09)']
+        ]
+      },
+      typographyNote: '',
+      sizing: [
+        'Navigation item 38px tall with a 5px corner radius',
+        'Buttons 32px tall with a 4px corner radius',
+        'Cards 8px radius with 16px 18px padding',
+        'Switch 40x20 with a 10px radius and a 14px thumb',
+        'Page title 28px / 600, body 14px / 400, auxiliary 12px'
+      ],
+      motion: [
+        'General easing `cubic-bezier(0.2, 0, 0, 1)`',
+        'Theme switch `transition: background-color .25s ease, color .25s ease`',
+        'Hover and pressed feedback 0.1s ~ 0.16s',
+        'Page transition fades in and shifts up over 0.24s'
+      ],
+      shadows: [
+        'Card shadow `0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.045)`',
+        'Overlay shadow `0 8px 28px rgba(0,0,0,0.16)`, deepened in dark mode',
+        'Translucent solid fills simulate acrylic'
+      ],
+      interactions: [
+        'Text selection is disabled by default, except in inputs and information values',
+        'Close button hover color `#C42B1C`',
+        'Focus state uses a stroke rather than an outer glow'
+      ],
+      check: 'Acrylic-like translucent surfaces and 8px corner radii are used consistently'
+    },
+    {
+      key: 'material',
+      file: 'Material',
+      name: 'Material Design 3',
+      short: 'Material',
+      vendor: 'Google · Material You',
+      swatch: ['#6750A4', '#FEF7FF', '#141218'],
+      font: '"Roboto", "Roboto Flex", "Noto Sans SC", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Roboto Mono", "Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Surface', '#FEF7FF'],
+          ['Surface container', '#F3EDF7'],
+          ['Elevated card', '#FFFFFF'],
+          ['Primary text', '#1D1B20'],
+          ['Secondary text', '#49454F'],
+          ['Tertiary text', '#79747E'],
+          ['Outline', '#79747E'],
+          ['Outline variant', '#CAC4D0'],
+          ['Primary', '#6750A4'],
+          ['On primary', '#FFFFFF'],
+          ['Hover state layer', 'rgba(103,80,164,0.08)'],
+          ['Pressed state layer', 'rgba(103,80,164,0.12)']
+        ],
+        dark: [
+          ['Surface', '#141218'],
+          ['Surface container', '#211F26'],
+          ['Elevated card', '#2B2930'],
+          ['Primary text', '#E6E0E9'],
+          ['Secondary text', '#CAC4D0'],
+          ['Tertiary text', '#938F99'],
+          ['Outline', '#938F99'],
+          ['Outline variant', '#49454F'],
+          ['Primary', '#D0BCFF'],
+          ['On primary', '#381E72'],
+          ['Hover state layer', 'rgba(208,188,255,0.08)'],
+          ['Pressed state layer', 'rgba(208,188,255,0.12)']
+        ]
+      },
+      typographyNote: 'Follow the M3 type scale: display 57/64, headline 24/32, title 16-22, body 14/20, label 12/16.',
+      sizing: [
+        'Floating action button 56px with a 16px radius',
+        'Filled buttons 40px tall and fully rounded (pill)',
+        'Cards 12px radius with no border',
+        'List item 56px, navigation rail 80px wide, top app bar 64px',
+        'Switch 52x32 with a 24px thumb'
+      ],
+      motion: [
+        'Standard easing `cubic-bezier(0.2, 0, 0, 1)`, emphasized `cubic-bezier(0.05, 0.7, 0.1, 1)`',
+        'Durations: 200ms short, 300ms medium, 500ms long',
+        'Ripple expands from the pointer origin on press',
+        'Theme switch animates color tokens over 0.25s'
+      ],
+      shadows: [
+        'Elevation 0 is flat; prefer tonal surfaces over shadows',
+        'Level 1 `0 1px 2px rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15)`',
+        'Level 3 `0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.30)` for menus and dialogs'
+      ],
+      interactions: [
+        'State layers: hover 8%, focus 12%, pressed 12% of the primary color',
+        'Buttons are pill-shaped, cards use 12px corners',
+        'Text selection is allowed and touch targets stay at least 48px'
+      ],
+      check: 'Interactive surfaces use state layers and pill-shaped buttons'
+    },
+    {
+      key: 'cupertino',
+      file: 'Cupertino',
+      name: 'Cupertino (Apple HIG)',
+      short: 'Cupertino',
+      vendor: 'Apple · iOS / macOS',
+      swatch: ['#007AFF', '#F2F2F7', '#1C1C1E'],
+      font: '-apple-system, "SF Pro Text", "SF Pro Display", "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"SF Mono", "Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#F2F2F7'],
+          ['Card', '#FFFFFF'],
+          ['Elevated card', '#FFFFFF'],
+          ['Primary text', '#000000'],
+          ['Secondary text', 'rgba(60,60,67,0.6)'],
+          ['Tertiary text', 'rgba(60,60,67,0.3)'],
+          ['Separator', 'rgba(60,60,67,0.29)'],
+          ['Fill', 'rgba(120,120,128,0.12)'],
+          ['Accent', '#007AFF'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(0,0,0,0.04)'],
+          ['Pressed', 'rgba(0,0,0,0.08)']
+        ],
+        dark: [
+          ['Background', '#000000'],
+          ['Card', '#1C1C1E'],
+          ['Elevated card', '#2C2C2E'],
+          ['Primary text', '#FFFFFF'],
+          ['Secondary text', 'rgba(235,235,245,0.6)'],
+          ['Tertiary text', 'rgba(235,235,245,0.3)'],
+          ['Separator', 'rgba(84,84,88,0.6)'],
+          ['Fill', 'rgba(120,120,128,0.36)'],
+          ['Accent', '#0A84FF'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(255,255,255,0.06)'],
+          ['Pressed', 'rgba(255,255,255,0.10)']
+        ]
+      },
+      typographyNote: 'Large title 34/700, title 22/600, body 17/400, footnote 13/400, caption 11/400.',
+      sizing: [
+        'Cards 12-16px radius',
+        'Buttons 32px tall on desktop with an 8-10px radius, 44px touch target',
+        'Switch 51x31, segmented control 9px radius',
+        'Sidebar 240px, toolbar 52px',
+        'Corners are generous; every surface feels rounded'
+      ],
+      motion: [
+        'Default easing `cubic-bezier(0.25, 0.1, 0.25, 1)`',
+        'Spring-like `cubic-bezier(0.34, 1.56, 0.64, 1)` for popovers and switches',
+        'Transitions 0.2s-0.35s, modal sheets 0.4s',
+        'Content fades and scales in slightly on load'
+      ],
+      shadows: [
+        'Cards `0 2px 10px rgba(0,0,0,0.06)`',
+        'Popovers `0 6px 24px rgba(0,0,0,0.12)`',
+        'Sheets `0 -8px 40px rgba(0,0,0,0.18)`',
+        'Toolbars and sheets use `backdrop-filter: blur(20px) saturate(180%)`'
+      ],
+      interactions: [
+        'Minimum hit target 44x44px',
+        'Hairline separators (0.5px) instead of thick borders',
+        'Text selection is allowed',
+        'Focus ring `1px solid` accent at 40% opacity'
+      ],
+      check: 'Toolbars and sheets use a blurred translucent backdrop'
+    },
+    {
+      key: 'ant',
+      file: 'AntDesign',
+      name: 'Ant Design 5',
+      short: 'AntDesign',
+      vendor: 'Ant Group · Enterprise',
+      swatch: ['#1677FF', '#F5F5F5', '#141414'],
+      font: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei UI", sans-serif',
+      mono: '"SFMono-Regular", "Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#FFFFFF'],
+          ['Layout background', '#F5F5F5'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', 'rgba(0,0,0,0.88)'],
+          ['Secondary text', 'rgba(0,0,0,0.65)'],
+          ['Tertiary text', 'rgba(0,0,0,0.45)'],
+          ['Border', '#D9D9D9'],
+          ['Split line', '#F0F0F0'],
+          ['Accent', '#1677FF'],
+          ['Accent hover', '#4096FF'],
+          ['Accent text', '#FFFFFF']
+        ],
+        dark: [
+          ['Background', '#141414'],
+          ['Layout background', '#000000'],
+          ['Card', '#1F1F1F'],
+          ['Primary text', 'rgba(255,255,255,0.85)'],
+          ['Secondary text', 'rgba(255,255,255,0.65)'],
+          ['Tertiary text', 'rgba(255,255,255,0.45)'],
+          ['Border', '#424242'],
+          ['Split line', '#303030'],
+          ['Accent', '#1668DC'],
+          ['Accent hover', '#3C89E8'],
+          ['Accent text', '#FFFFFF']
+        ]
+      },
+      typographyNote: 'Base font size 14px; headings 20/600 and 16/600; small text 12px; line-height 1.5715.',
+      sizing: [
+        'Base radius 6px, cards 8px',
+        'Buttons 32px tall with a 6px radius',
+        'Inputs 32px tall with a 6px radius',
+        'Header 64px, sider 200px, table row 54px',
+        'Avatars and tags use smaller radii (2-4px)'
+      ],
+      motion: [
+        'Easing `cubic-bezier(0.645, 0.045, 0.355, 1)`',
+        'Motion duration mid 0.2s, ease 0.1s',
+        'No bouncy curves; transitions stay short and calm',
+        'Hover states change border and text color together'
+      ],
+      shadows: [
+        'Card `0 1px 2px -2px rgba(0,0,0,0.16), 0 3px 6px 0 rgba(0,0,0,0.12), 0 5px 12px 4px rgba(0,0,0,0.09)`',
+        'Popover `0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05)`',
+        'Dropdown and modal reuse the popover shadow'
+      ],
+      interactions: [
+        'Hover turns borders to the accent color',
+        'Focus ring `box-shadow: 0 0 0 2px rgba(5,145,255,0.1)`',
+        'Danger color `#FF4D4F`',
+        'Text selection is allowed everywhere'
+      ],
+      check: 'Form controls show the 2px accent focus ring'
+    },
+    {
+      key: 'neu',
+      file: 'Neumorphism',
+      name: 'Neumorphism (Soft UI)',
+      short: 'Neumorphism',
+      vendor: 'Soft UI · Low contrast',
+      swatch: ['#E0E5EC', '#A3B1C6', '#4C6FFF'],
+      font: '"Inter", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#E0E5EC'],
+          ['Card', '#E0E5EC (same as background)'],
+          ['Primary text', '#3B4453'],
+          ['Secondary text', '#6B7280'],
+          ['Tertiary text', '#9AA3B2'],
+          ['Highlight', '#FFFFFF'],
+          ['Shadow', '#A3B1C6'],
+          ['Accent', '#4C6FFF'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover tint', 'rgba(76,111,255,0.08)']
+        ],
+        dark: [
+          ['Background', '#2E3238'],
+          ['Card', '#2E3238 (same as background)'],
+          ['Primary text', '#E6E9EF'],
+          ['Secondary text', '#A8B0BD'],
+          ['Tertiary text', '#7C8492'],
+          ['Highlight', 'rgba(255,255,255,0.06)'],
+          ['Shadow', '#23262B'],
+          ['Accent', '#7C93FF'],
+          ['Accent text', '#101426'],
+          ['Hover tint', 'rgba(124,147,255,0.10)']
+        ]
+      },
+      typographyNote: 'Increase letter-spacing slightly (0.01em) and use 1.6 line-height so soft surfaces stay readable.',
+      sizing: [
+        'Cards 20px radius with 20px 24px padding',
+        'Buttons 40px tall with a 16px radius',
+        'Inputs 40px tall with a 14px radius',
+        'Icon buttons 40px circles',
+        'Switch 44x24'
+      ],
+      motion: [
+        'Easing `cubic-bezier(0.22, 1, 0.36, 1)`',
+        'Transitions 0.25s; press feedback 0.12s',
+        'Press converts raised shadows into inset shadows',
+        'Avoid large moving surfaces; depth carries the motion'
+      ],
+      shadows: [
+        'Raised `6px 6px 12px #A3B1C6, -6px -6px 12px #FFFFFF`',
+        'Pressed `inset 4px 4px 8px #A3B1C6, inset -4px -4px 8px #FFFFFF`',
+        'Dark raised `6px 6px 12px #23262B, -6px -6px 12px rgba(255,255,255,0.06)`',
+        'Never combine hard borders with soft shadows'
+      ],
+      interactions: [
+        'No hard borders; depth comes from paired highlight and shadow',
+        'Keep the accent color for focus and primary actions only',
+        'Avoid neumorphism on dense text tables',
+        'Text selection is allowed in content areas'
+      ],
+      check: 'Surfaces use paired light/dark shadows instead of borders'
+    },
+    {
+      key: 'bootstrap',
+      file: 'Bootstrap',
+      name: 'Bootstrap 5',
+      short: 'Bootstrap',
+      vendor: 'Bootstrap · Web utility',
+      swatch: ['#0D6EFD', '#F8F9FA', '#212529'],
+      font: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Microsoft YaHei UI", sans-serif',
+      mono: '"SFMono-Regular", Menlo, Monaco, Consolas, "Cascadia Code", monospace',
+      colors: {
+        light: [
+          ['Background', '#F8F9FA'],
+          ['Card', '#FFFFFF'],
+          ['Body text', '#212529'],
+          ['Secondary text', '#6C757D'],
+          ['Muted text', '#ADB5BD'],
+          ['Border', '#DEE2E6'],
+          ['Primary', '#0D6EFD'],
+          ['Primary hover', '#0B5ED7'],
+          ['On primary', '#FFFFFF'],
+          ['Hover', 'rgba(13,110,253,0.06)'],
+          ['Active', 'rgba(13,110,253,0.12)']
+        ],
+        dark: [
+          ['Background', '#212529'],
+          ['Card', '#2B3035'],
+          ['Body text', '#F8F9FA'],
+          ['Secondary text', '#ADB5BD'],
+          ['Muted text', '#6C757D'],
+          ['Border', '#495057'],
+          ['Primary', '#3D8BFD'],
+          ['Primary hover', '#6EA8FE'],
+          ['On primary', '#0B1220'],
+          ['Hover', 'rgba(61,139,253,0.10)'],
+          ['Active', 'rgba(61,139,253,0.18)']
+        ]
+      },
+      typographyNote: 'Base 16px / 1.5; headings scale from 2.5rem to 1rem; small text 0.875rem; labels use 500 weight.',
+      sizing: [
+        'Cards 6px radius with 16px padding',
+        'Buttons 38px tall with a 6px radius',
+        'Inputs 38px tall with a 6px radius',
+        'Grid gutter 24px, container max width 1320px',
+        'Navbar 56px, modal max width 500px'
+      ],
+      motion: [
+        '`transition: all .15s ease-in-out` on interactive elements',
+        'Collapse and accordion 0.35s ease',
+        'No bounce or spring curves',
+        'Hover darkens filled buttons by one step'
+      ],
+      shadows: [
+        'Cards flat by default, optional `0 .125rem .25rem rgba(0,0,0,.075)`',
+        'Dropdown `0 .5rem 1rem rgba(0,0,0,.175)`',
+        'Modal `0 .5rem 1rem rgba(0,0,0,.5)`'
+      ],
+      interactions: [
+        'Focus ring `0 0 0 .25rem rgba(13,110,253,.25)`',
+        'Validation colors: success `#198754`, danger `#DC3545`, warning `#FFC107`',
+        'Links underline on hover only',
+        'Text selection enabled'
+      ],
+      check: 'Every control shows the 4px translucent primary focus ring'
+    },
+    {
+      key: 'saas',
+      file: 'SaaS',
+      name: 'Modern SaaS (Tailwind)',
+      short: 'SaaS',
+      vendor: 'Tailwind · Product UI',
+      swatch: ['#6366F1', '#F8FAFC', '#0F172A'],
+      font: '"Inter", "Inter var", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"JetBrains Mono", "Cascadia Code", ui-monospace, monospace',
+      colors: {
+        light: [
+          ['Background', '#F8FAFC'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#0F172A'],
+          ['Secondary text', '#475569'],
+          ['Tertiary text', '#94A3B8'],
+          ['Border', '#E2E8F0'],
+          ['Accent', '#6366F1'],
+          ['Accent hover', '#4F46E5'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(15,23,42,0.04)'],
+          ['Pressed', 'rgba(15,23,42,0.08)']
+        ],
+        dark: [
+          ['Background', '#0F172A'],
+          ['Card', '#1E293B'],
+          ['Primary text', '#F8FAFC'],
+          ['Secondary text', '#94A3B8'],
+          ['Tertiary text', '#64748B'],
+          ['Border', '#334155'],
+          ['Accent', '#818CF8'],
+          ['Accent hover', '#A5B4FC'],
+          ['Accent text', '#0B1120'],
+          ['Hover', 'rgba(148,163,184,0.10)'],
+          ['Pressed', 'rgba(148,163,184,0.18)']
+        ]
+      },
+      typographyNote: 'Base 14px with 1.6 line-height; page title 24/600 with tight tracking; labels 12px / 500.',
+      sizing: [
+        'Cards 12px radius with 24px padding',
+        'Buttons 36px tall with an 8px radius',
+        'Inputs 36px tall with an 8px radius and 1px border',
+        'Sidebar 260px, top bar 56px',
+        'Badges fully rounded pills'
+      ],
+      motion: [
+        'Hover transitions 150ms ease-out, layout changes 200ms',
+        'Primary buttons scale to 0.98 on press',
+        'Menus fade in with a 4px translate',
+        'Skeleton shimmer while data loads'
+      ],
+      shadows: [
+        'Cards `0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04)`',
+        'Dropdowns `0 10px 25px -5px rgba(15,23,42,0.15)`',
+        'Pair every shadow with a 1px border'
+      ],
+      interactions: [
+        'Focus ring `0 0 0 3px rgba(99,102,241,0.25)`',
+        'Cards lift 1px on hover',
+        'Icons 16px with an 8px gap to labels',
+        'Text selection enabled'
+      ],
+      check: 'Cards combine a 1px border with a soft shadow and 12px radius'
+    },
+    {
+      key: 'glass',
+      file: 'Glassmorphism',
+      name: 'Glassmorphism',
+      short: 'Glassmorphism',
+      vendor: 'Frosted glass · Vibrant backdrop',
+      swatch: ['#8B5CF6', '#38BDF8', '#0F172A'],
+      font: '"Inter", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Cascadia Code", ui-monospace, monospace',
+      colors: {
+        light: [
+          ['Background', 'linear-gradient(135deg,#E0F2FE 0%,#EDE9FE 50%,#FCE7F3 100%)'],
+          ['Panel', 'rgba(255,255,255,0.55)'],
+          ['Primary text', '#1E1B4B'],
+          ['Secondary text', '#475569'],
+          ['Tertiary text', '#94A3B8'],
+          ['Panel border', 'rgba(255,255,255,0.65)'],
+          ['Accent', '#6366F1'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(255,255,255,0.35)'],
+          ['Pressed', 'rgba(255,255,255,0.5)']
+        ],
+        dark: [
+          ['Background', 'linear-gradient(135deg,#0B1120 0%,#1E1B4B 55%,#0F172A 100%)'],
+          ['Panel', 'rgba(255,255,255,0.08)'],
+          ['Primary text', '#F8FAFC'],
+          ['Secondary text', 'rgba(226,232,240,0.75)'],
+          ['Tertiary text', 'rgba(148,163,184,0.7)'],
+          ['Panel border', 'rgba(255,255,255,0.16)'],
+          ['Accent', '#A5B4FC'],
+          ['Accent text', '#1E1B4B'],
+          ['Hover', 'rgba(255,255,255,0.12)'],
+          ['Pressed', 'rgba(255,255,255,0.18)']
+        ]
+      },
+      typographyNote: 'Keep type at 500 weight on glass so thin strokes stay legible; avoid text directly on busy backdrops.',
+      sizing: [
+        'Panels 20px radius with 20-24px padding',
+        '`backdrop-filter: blur(24px) saturate(160%)` on every panel',
+        'Buttons 36px tall with a 12px radius',
+        'Inputs 36px tall with a 16px radius',
+        'Gradient backdrop spans the full window'
+      ],
+      motion: [
+        'Transitions 200ms `cubic-bezier(0.22,1,0.36,1)`',
+        'Hover raises panel brightness and adds a 1px white highlight',
+        'Blur radius animates 16px to 24px on focus',
+        'Avoid fast parallax movement'
+      ],
+      shadows: [
+        'Panels `0 8px 32px rgba(15,23,42,0.18)` plus `inset 0 1px 0 rgba(255,255,255,0.4)`',
+        'No hard black shadows in light mode',
+        'Glow accents use the accent color at 30% opacity'
+      ],
+      interactions: [
+        'Backdrop blur only on panels, never on text blocks',
+        'Borders are 1px translucent white',
+        'Focus ring 2px accent at 60%',
+        'Keep body text at 4.5:1 contrast minimum'
+      ],
+      check: 'Panels use translucent fills plus backdrop blur, never solid backgrounds'
+    },
+    {
+      key: 'flat',
+      file: 'FlatMinimal',
+      name: 'Flat Minimal',
+      short: 'FlatMinimal',
+      vendor: 'Flat · Zero ornament',
+      swatch: ['#2563EB', '#FFFFFF', '#111827'],
+      font: '"Inter", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Cascadia Code", ui-monospace, monospace',
+      colors: {
+        light: [
+          ['Background', '#FFFFFF'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#111827'],
+          ['Secondary text', '#6B7280'],
+          ['Tertiary text', '#9CA3AF'],
+          ['Border', '#E5E7EB'],
+          ['Accent', '#2563EB'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', '#F3F4F6'],
+          ['Pressed', '#E5E7EB']
+        ],
+        dark: [
+          ['Background', '#111827'],
+          ['Card', '#111827'],
+          ['Primary text', '#F9FAFB'],
+          ['Secondary text', '#9CA3AF'],
+          ['Tertiary text', '#6B7280'],
+          ['Border', '#1F2937'],
+          ['Accent', '#60A5FA'],
+          ['Accent text', '#0B1220'],
+          ['Hover', '#1F2937'],
+          ['Pressed', '#273244']
+        ]
+      },
+      typographyNote: 'Base 14px / 1.6; titles 20/600; no gradients, no letter-spacing tricks.',
+      sizing: [
+        'Cards 8px radius, buttons and inputs 6px radius',
+        'No shadows anywhere; separate blocks with 1px dividers',
+        'Icons 20px with 1.5 stroke',
+        'Spacing in 4px multiples',
+        'Toolbar 48px, sidebar 240px'
+      ],
+      motion: [
+        'Only 120ms color and border transitions',
+        'Instant state feedback, no scale or bounce',
+        'Page content appears without transition',
+        'Loading uses a thin determinate progress bar'
+      ],
+      shadows: [
+        'No shadows at all; separation via 1px borders and background shifts',
+        'Overlays use a 1px border plus a 40% black scrim',
+        'No blur and no glass effects'
+      ],
+      interactions: [
+        'Hover changes background only, never elevation',
+        'Focus uses a 2px solid accent outline with 2px offset',
+        'Selection uses the accent at 15%',
+        'All icons stay monochrome'
+      ],
+      check: 'No shadows, gradients, or blurs appear anywhere'
+    },
+    {
+      key: 'skeuo',
+      file: 'Skeuomorphic',
+      name: 'Skeuomorphic',
+      short: 'Skeuomorphic',
+      vendor: 'Textured · Real-world metaphors',
+      swatch: ['#8B5A2B', '#F5EFE6', '#3E2C1C'],
+      font: '"Segoe UI", "Microsoft YaHei UI", "Helvetica Neue", system-ui, sans-serif',
+      mono: '"Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#F5EFE6'],
+          ['Card', '#FFFDF8'],
+          ['Primary text', '#3E2C1C'],
+          ['Secondary text', '#6B5641'],
+          ['Tertiary text', '#9A8671'],
+          ['Border', '#D8C9B4'],
+          ['Accent', '#8B5A2B'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', '#EFE6D8'],
+          ['Pressed', '#E3D6C3']
+        ],
+        dark: [
+          ['Background', '#2A2119'],
+          ['Card', '#3A2F25'],
+          ['Primary text', '#F3EADF'],
+          ['Secondary text', '#C9B8A3'],
+          ['Tertiary text', '#9C8B77'],
+          ['Border', '#54463A'],
+          ['Accent', '#C68B59'],
+          ['Accent text', '#2A2119'],
+          ['Hover', '#443729'],
+          ['Pressed', '#4F4030']
+        ]
+      },
+      typographyNote: 'Serif headings (Georgia / Iowan Old Style / Songti SC) with a 14-15px sans body; keep line-height 1.55.',
+      sizing: [
+        'Cards 10px radius with a leather-like 1px border and inner highlight',
+        'Buttons 34px tall with an 8px radius and a 1px bottom shadow',
+        'Inputs use an inset shadow `inset 0 1px 3px rgba(62,44,28,0.25)`',
+        'Dividers 1px with a light upper edge',
+        'Tabs look like physical file tabs'
+      ],
+      motion: [
+        'Mechanical feel: 120ms ease-out, no bounce',
+        'Button press depresses 1px and swaps to an inset shadow',
+        'Toggles slide in 150ms',
+        'Never animate longer than 200ms'
+      ],
+      shadows: [
+        'Raised `inset 0 1px 0 #FFFFFF, 0 2px 4px rgba(62,44,28,0.25)`',
+        'Pressed `inset 0 2px 4px rgba(62,44,28,0.35)`',
+        'Paper grain via a repeating SVG noise layer at 3% opacity'
+      ],
+      interactions: [
+        'Hover slightly lightens the surface',
+        'Focus draws a 2px accent ring outside the bevel',
+        'Use real textures sparingly (paper, leather, brushed metal)',
+        'Keep hit areas at least 32px'
+      ],
+      check: 'Controls show physical depth (bevel plus inner highlight) rather than flat borders'
+    },
+    {
+      key: 'neon',
+      file: 'CyberpunkNeon',
+      name: 'Cyberpunk Neon',
+      short: 'Cyberpunk',
+      vendor: 'Neon · Night city',
+      swatch: ['#00F0FF', '#FF2E97', '#08070F'],
+      font: '"Rajdhani", "Chakra Petch", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Share Tech Mono", "Cascadia Code", monospace',
+      colors: {
+        light: [
+          ['Background', '#F2F0FF'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#0B0B14'],
+          ['Secondary text', '#3B3B54'],
+          ['Tertiary text', '#6E6A93'],
+          ['Border', 'rgba(11,11,20,0.10)'],
+          ['Accent', '#7C3AED'],
+          ['Accent alt', '#DB2777'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', 'rgba(124,58,237,0.10)'],
+          ['Pressed', 'rgba(124,58,237,0.18)']
+        ],
+        dark: [
+          ['Background', '#08070F'],
+          ['Card', 'rgba(20,18,38,0.72)'],
+          ['Primary text', '#F1F0FF'],
+          ['Secondary text', '#A8A4D0'],
+          ['Tertiary text', '#6E6A93'],
+          ['Border', 'rgba(0,240,255,0.28)'],
+          ['Accent', '#00F0FF'],
+          ['Accent alt', '#FF2E97'],
+          ['Accent text', '#04121A'],
+          ['Hover', 'rgba(0,240,255,0.12)'],
+          ['Pressed', 'rgba(0,240,255,0.20)']
+        ]
+      },
+      typographyNote: 'Uppercase labels with 0.12em tracking; headings 600-700; numerics use a monospaced face.',
+      sizing: [
+        'Cards 4px radius with a 1px cyan border',
+        'Buttons 34px tall with 4px radius and clipped corners',
+        'Inputs 34px tall with a 1px border and glow',
+        'HUD frames add corner brackets',
+        'Everything aligns to an 8px grid'
+      ],
+      motion: [
+        'Glitch flicker only on state change, max 180ms',
+        'Glow pulse 2.4s infinite on live indicators',
+        'Scanline overlay at 4% opacity, never fast strobing',
+        'Hover transitions 120ms linear'
+      ],
+      shadows: [
+        'Neon glow `0 0 12px rgba(0,240,255,0.55), 0 0 32px rgba(0,240,255,0.25)`',
+        'Magenta secondary glow `0 0 18px rgba(255,46,151,0.45)`',
+        'Deep backdrop `0 0 60px rgba(0,0,0,0.9)`'
+      ],
+      interactions: [
+        'Text and borders glow on hover, they never move',
+        'Focus adds a 1px accent outline plus an 8px glow',
+        'Glow stays on accents only; body text keeps high contrast',
+        'No strobing effects for accessibility'
+      ],
+      check: 'Neon glow appears only on accents and borders, never on body text'
+    },
+    {
+      key: 'corporate',
+      file: 'Corporate',
+      name: 'Corporate Enterprise',
+      short: 'Corporate',
+      vendor: 'Enterprise · Dense data',
+      swatch: ['#0F62FE', '#F4F6F8', '#1F2937'],
+      font: '"IBM Plex Sans", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"IBM Plex Mono", "Cascadia Code", monospace',
+      colors: {
+        light: [
+          ['Background', '#F4F6F8'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#1F2937'],
+          ['Secondary text', '#4B5563'],
+          ['Tertiary text', '#6B7280'],
+          ['Border', '#D5DBE1'],
+          ['Accent', '#0F62FE'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', '#F0F4F8'],
+          ['Pressed', '#E4EAF1']
+        ],
+        dark: [
+          ['Background', '#12161B'],
+          ['Card', '#1B2129'],
+          ['Primary text', '#E8ECF1'],
+          ['Secondary text', '#B4BEC9'],
+          ['Tertiary text', '#8A96A3'],
+          ['Border', '#2C3542'],
+          ['Accent', '#4C8DFF'],
+          ['Accent text', '#08121F'],
+          ['Hover', '#232B35'],
+          ['Pressed', '#2C3542']
+        ]
+      },
+      typographyNote: 'Base 13px / 1.5 for dense tables; headings 18/600; use `font-variant-numeric: tabular-nums` for numbers.',
+      sizing: [
+        'Cards 4px radius with a 1px border and no shadow',
+        'Buttons 32px tall with a 4px radius',
+        'Inputs 32px tall, table rows 40px with striped backgrounds',
+        'Header 56px, sider 240px',
+        'Dense 8px grid with 12-16px padding'
+      ],
+      motion: [
+        'Minimal: 100-150ms linear color changes',
+        'No transforms or scale effects',
+        'Expand and collapse 180ms ease-out',
+        'Loading uses an inline spinner'
+      ],
+      shadows: [
+        'No card shadows; 1px borders only',
+        'Dropdown and modal `0 6px 16px rgba(15,23,42,0.16)` in light',
+        'Dark overlays `0 6px 20px rgba(0,0,0,0.5)`'
+      ],
+      interactions: [
+        'Hover row background `#F0F4F8`',
+        'Focus shows a 2px accent outline',
+        'Status colors: success `#12B76A`, warning `#F79009`, error `#F04438`',
+        'Text selection enabled and IDs copyable'
+      ],
+      check: 'Tables stay dense (40px rows) with tabular numerals and 1px borders'
+    },
+    {
+      key: 'pixel',
+      file: 'RetroPixel',
+      name: 'Retro Pixel',
+      short: 'RetroPixel',
+      vendor: '8-bit · Pixel perfect',
+      swatch: ['#FF004D', '#1D2B53', '#FFF1E8'],
+      font: '"Press Start 2P", "VT323", "MS Gothic", monospace',
+      mono: '"VT323", "Cascadia Code", monospace',
+      colors: {
+        light: [
+          ['Background', '#FFF1E8'],
+          ['Card', '#FFE0C8'],
+          ['Primary text', '#1D2B53'],
+          ['Secondary text', '#7E2553'],
+          ['Tertiary text', '#83769C'],
+          ['Border', '#1D2B53'],
+          ['Accent', '#FF004D'],
+          ['Accent text', '#FFF1E8'],
+          ['Hover', '#FFE4D0'],
+          ['Pressed', '#FFD5BC']
+        ],
+        dark: [
+          ['Background', '#1D2B53'],
+          ['Card', '#28355F'],
+          ['Primary text', '#FFF1E8'],
+          ['Secondary text', '#C2C3C7'],
+          ['Tertiary text', '#83769C'],
+          ['Border', '#FFF1E8'],
+          ['Accent', '#FF77A8'],
+          ['Accent text', '#1D2B53'],
+          ['Hover', '#33406B'],
+          ['Pressed', '#3D4A76']
+        ]
+      },
+      typographyNote: 'Pixel fonts only at 8px multiples; uppercase headings; never render below 12px.',
+      sizing: [
+        'Zero border radius everywhere',
+        'Buttons 32px tall with 2px solid borders and a hard offset shadow',
+        'Cards 2px border plus a `4px 4px 0` shadow',
+        '8px grid with 16px padding',
+        'Pixel icons at 16 / 24 / 32px'
+      ],
+      motion: [
+        'Step-based motion (`steps(4, end)`) at 120-200ms',
+        'No smooth gradients or blur',
+        'Hover shifts the element 2px toward its hard shadow',
+        'Blinking cursors at 1s intervals'
+      ],
+      shadows: [
+        'Hard shadows only: `4px 4px 0 var(--text)`',
+        'Zero blur radius anywhere',
+        'Pressed removes the offset shadow'
+      ],
+      interactions: [
+        'Borders are always 2px solid ink color',
+        'Focus inverts the color block',
+        'Keep contrast high; avoid thin lines',
+        'Images use `image-rendering: pixelated`'
+      ],
+      check: 'All radii are 0 and every shadow stays hard-edged with no blur'
+    },
+    {
+      key: 'warm',
+      file: 'WarmMinimal',
+      name: 'Warm Minimalism',
+      short: 'WarmMinimal',
+      vendor: 'Earthy · Calm',
+      swatch: ['#C2703D', '#FBF7F2', '#2E2A26'],
+      font: '"Inter", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif',
+      mono: '"Cascadia Code", ui-monospace, monospace',
+      colors: {
+        light: [
+          ['Background', '#FBF7F2'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#2E2A26'],
+          ['Secondary text', '#6B6259'],
+          ['Tertiary text', '#9C9488'],
+          ['Border', '#EAE1D6'],
+          ['Accent', '#C2703D'],
+          ['Accent text', '#FFF9F3'],
+          ['Hover', '#F5EDE3'],
+          ['Pressed', '#EFE4D6']
+        ],
+        dark: [
+          ['Background', '#221E1A'],
+          ['Card', '#2C2722'],
+          ['Primary text', '#F6EFE6'],
+          ['Secondary text', '#C6BBAE'],
+          ['Tertiary text', '#9A8E80'],
+          ['Border', '#3D372F'],
+          ['Accent', '#E39A6B'],
+          ['Accent text', '#241A12'],
+          ['Hover', '#332D27'],
+          ['Pressed', '#3C352E']
+        ]
+      },
+      typographyNote: 'Pair a serif display face (Fraunces / Georgia) with 15px sans body at 1.7 line-height and generous spacing.',
+      sizing: [
+        'Cards 14px radius with a 1px warm border and no shadow',
+        'Buttons 36px tall with a 10px radius',
+        'Inputs 36px tall on white with a 1px warm border',
+        'Section spacing 32-48px',
+        'Images keep a 2-4px inner radius'
+      ],
+      motion: [
+        'Slow, calm transitions 240-320ms ease-out',
+        'Fade plus an 8px rise for content blocks',
+        'No bounces or spring physics',
+        'Hover shifts background only'
+      ],
+      shadows: [
+        'Very soft `0 1px 2px rgba(46,42,38,0.06)`',
+        'Replace heavy shadows with warm background tints',
+        'Dividers 1px `#EAE1D6`'
+      ],
+      interactions: [
+        'Links use the warm accent with an underline offset',
+        'Focus ring `2px solid` accent at 50%',
+        'Selection `rgba(194,112,61,0.22)`',
+        'Text selection enabled'
+      ],
+      check: 'Surfaces stay warm-toned with 1px borders and no hard black shadows'
+    },
+    {
+      key: 'luna',
+      file: 'WindowsXP',
+      name: 'Windows XP Luna',
+      short: 'Luna',
+      vendor: 'Microsoft · Windows XP',
+      swatch: ['#245EDB', '#ECE9D8', '#0058E6'],
+      font: '"Tahoma", "Segoe UI", "Microsoft YaHei UI", sans-serif',
+      mono: '"Lucida Console", "Cascadia Code", monospace',
+      colors: {
+        light: [
+          ['Background', '#ECE9D8'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#000000'],
+          ['Secondary text', '#4A4A4A'],
+          ['Tertiary text', '#7A7A7A'],
+          ['Border', '#919B9C'],
+          ['Accent', '#245EDB'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', '#E5EEFB'],
+          ['Pressed', '#D5E3F7']
+        ],
+        dark: [
+          ['Background', '#2B2B2B'],
+          ['Card', '#3C3C3C'],
+          ['Primary text', '#FFFFFF'],
+          ['Secondary text', '#C8C8C8'],
+          ['Tertiary text', '#9A9A9A'],
+          ['Border', '#6E6E6E'],
+          ['Accent', '#4A8CFF'],
+          ['Accent text', '#0A0A0A'],
+          ['Hover', '#3A3A3A'],
+          ['Pressed', '#464646']
+        ]
+      },
+      typographyNote: 'Tahoma 11px is the classic size; headings 12-14px bold; line-height 1.4.',
+      sizing: [
+        'Title bar 28px with a blue gradient and rounded top corners',
+        'Buttons 23px tall with a 2px radius and a 1px `#003C74` border',
+        'Cards 3px radius with a 1px `#919B9C` border',
+        'Group boxes use etched 1px borders',
+        'Menu bar 22px, status bar 22px'
+      ],
+      motion: [
+        'Almost none: 80-120ms color changes',
+        'Buttons show an inset border when pressed',
+        'No fades or transforms',
+        'Progress bars animate in 2px segments'
+      ],
+      shadows: [
+        'No window shadows; depth comes from bevels',
+        'Bevel `inset 1px 1px 0 #FFFFFF, inset -1px -1px 0 #ACA899`',
+        'Title bar gradient `linear-gradient(180deg,#0058E6,#3A93FF 8%,#0054E3 40%,#0050D8)`'
+      ],
+      interactions: [
+        'Selected items use a blue highlight with white text',
+        'Focus draws a dotted 1px rectangle inside the control',
+        'Tooltips are pale yellow `#FFFFE1` with a 1px black border',
+        'No hover lift or scaling'
+      ],
+      check: 'Controls look beveled (light top-left, dark bottom-right) instead of using shadows'
+    },
+    {
+      key: 'terminal',
+      file: 'Terminal',
+      name: 'Terminal UI',
+      short: 'Terminal',
+      vendor: 'Console · Monospace',
+      swatch: ['#33FF66', '#0B0F0C', '#00FF41'],
+      font: '"Cascadia Mono", "Cascadia Code", "Consolas", "Courier New", monospace',
+      mono: '"Cascadia Mono", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Background', '#F7F7F2'],
+          ['Card', '#FFFFFF'],
+          ['Primary text', '#0B0F0C'],
+          ['Secondary text', '#3A4A3F'],
+          ['Tertiary text', '#6B7A70'],
+          ['Border', '#C9D6CD'],
+          ['Accent', '#0F7B3F'],
+          ['Accent text', '#FFFFFF'],
+          ['Hover', '#EEF3EF'],
+          ['Pressed', '#E2EAE5']
+        ],
+        dark: [
+          ['Background', '#0B0F0C'],
+          ['Card', '#101711'],
+          ['Primary text', '#D8FFE4'],
+          ['Secondary text', '#8FD6A6'],
+          ['Tertiary text', '#5E8C6C'],
+          ['Border', '#1F3527'],
+          ['Accent', '#33FF66'],
+          ['Accent text', '#04130A'],
+          ['Hover', 'rgba(51,255,102,0.10)'],
+          ['Pressed', 'rgba(51,255,102,0.18)']
+        ]
+      },
+      typographyNote: 'Everything monospace at 13px / 1.5; use block characters for progress (`▆▅▄`) and a blinking block cursor.',
+      sizing: [
+        'Zero to 2px radius only',
+        'Log rows 24px tall with 48px for grouped output',
+        'Buttons 26px tall; labels wrap in `[ ]` brackets',
+        'Panels separated by ASCII rules `────`',
+        'Padding 12-16px on a 4px grid'
+      ],
+      motion: [
+        'Typewriter reveal 12-20ms per character, capped at 1.2s',
+        'Blinking block cursor at 1s steps',
+        'No scaling or fading; content simply appears',
+        'Progress redraws on a fixed interval'
+      ],
+      shadows: [
+        'No shadows; depth comes from background steps `#0B0F0C` to `#101711`',
+        'Optional scanline overlay at 3%',
+        'Selection is an inverted block'
+      ],
+      interactions: [
+        'Hover reverses foreground and background',
+        'Focus moves a visible block cursor',
+        'Shortcuts are shown as `[Ctrl+K]`',
+        'Keep body text above 7:1 contrast'
+      ],
+      check: 'All UI text is monospace and states change by color inversion, not shadows'
+    },
+    {
+      key: 'instrument',
+      file: 'InstrumentPanel',
+      name: 'Retro Instrument Panel',
+      short: 'Instrument',
+      vendor: 'Hardware · Analog gauges',
+      swatch: ['#FFB000', '#1A1A1A', '#33FF99'],
+      font: '"B612 Mono", "DIN Condensed", "Cascadia Code", "Consolas", monospace',
+      mono: '"B612 Mono", "Cascadia Code", "Consolas", monospace',
+      colors: {
+        light: [
+          ['Panel background', '#D9D5C8'],
+          ['Card', '#E6E2D5'],
+          ['Primary text', '#1A1A1A'],
+          ['Secondary text', '#4A4A4A'],
+          ['Tertiary text', '#7B7669'],
+          ['Border', '#8C8878'],
+          ['Accent (amber)', '#B26B00'],
+          ['Accent text', '#FFF6E0'],
+          ['Hover', '#D2CDBD'],
+          ['Pressed', '#C8C2B1']
+        ],
+        dark: [
+          ['Panel background', '#141414'],
+          ['Card', '#1E1E1C'],
+          ['Primary text', '#E8E3D5'],
+          ['Secondary text', '#B9B3A2'],
+          ['Tertiary text', '#7B7669'],
+          ['Border', '#3A3A34'],
+          ['Accent (amber)', '#FFB000'],
+          ['Accent text', '#201400'],
+          ['Hover', 'rgba(255,176,0,0.10)'],
+          ['Pressed', 'rgba(255,176,0,0.18)']
+        ]
+      },
+      typographyNote: 'Condensed engraved labels in uppercase with 0.08em tracking; digits use tabular numerals.',
+      sizing: [
+        'Panels 8px radius with a 1px dark border and an inner engraved line',
+        'Knobs 44px circles with a 2px indicator mark',
+        'Buttons 32px tall, rectangular, with a 2px bezel',
+        'LED indicators 8px circles with glow',
+        'Everything aligned to a 4px hardware grid'
+      ],
+      motion: [
+        'Meter needles ease over 400-600ms `cubic-bezier(0.3,0,0.2,1)`',
+        'LED blink 1.2s only for alarms',
+        'Switch toggles snap in 90ms',
+        'No page-level animation'
+      ],
+      shadows: [
+        'Bezel `inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 6px rgba(0,0,0,0.5)`',
+        'Amber glow `0 0 10px rgba(255,176,0,0.5)`',
+        'Panel drop `0 2px 6px rgba(0,0,0,0.45)`'
+      ],
+      interactions: [
+        'Hover brightens the lamp glow',
+        'Press depresses the button by 1px',
+        'Focus adds an amber outline',
+        'Alarm states use red `#FF3B30` with a pulsing glow'
+      ],
+      check: 'Panels have engraved bezels and amber indicator glow instead of flat borders'
+    }
+  ];
+
+  /* ---------------- 框架数据 ---------------- */
+  var FRAMEWORKS = [
+    {
+      key: 'wpf',
+      file: 'WPF',
+      name: 'WPF (.NET 8 / .NET 10)',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`Microsoft.Web.WebView2.Wpf.WebView2` control',
+      injection: '`NavigateToString` with the whole HTML document embedded as a C# raw string constant',
+      bridge: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`; or `AddHostObjectToScript`',
+      bridgeShort: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`',
+      files: [
+        '`App.csproj` - `net10.0-windows` (or `net8.0-windows`), `UseWPF`, `PackageReference Microsoft.Web.WebView2`',
+        '`App.xaml` / `App.xaml.cs` - application entry',
+        '`MainWindow.xaml` / `MainWindow.xaml.cs` - window chrome, WebView2 host, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`App.csproj`, `App.xaml`, `MainWindow.xaml`, and `MainWindow.xaml.cs` with the embedded HTML',
+      deps: [
+        '`.NET SDK 8.0` or later, `PackageReference Microsoft.Web.WebView2`',
+        'WebView2 Evergreen Runtime (preinstalled on Windows 11)'
+      ],
+      lang: 'C#',
+      syntax: '`"""..."""` (raw string literal, C# 11+) or `@"..."` (escape inner `"` as `""`)',
+      checkSyntax: 'All `"""` raw string literals are closed in pairs',
+      pack: 'dotnet publish -c Release -r win-x64 --self-contained',
+      titlebar: 'Use `WindowChrome` for a custom draggable Fluent title bar (double-click to maximize, hover states on caption buttons).'
+    },
+    {
+      key: 'winforms',
+      file: 'WinForms',
+      name: 'WinForms (.NET 8 / .NET 10)',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`Microsoft.Web.WebView2.WinForms.WebView2` control added to a `Form`',
+      injection: '`NavigateToString` with the whole HTML document embedded as a C# raw string constant',
+      bridge: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`',
+      bridgeShort: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`',
+      files: [
+        '`App.csproj` - WinForms + `PackageReference Microsoft.Web.WebView2`',
+        '`Program.cs` - `ApplicationConfiguration.Initialize()` and `Application.Run`',
+        '`Form1.cs` / `Form1.Designer.cs` - window chrome, WebView2 host, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`App.csproj`, `Program.cs`, and `Form1.cs` with the embedded HTML',
+      deps: [
+        '`.NET SDK 8.0` or later, `PackageReference Microsoft.Web.WebView2`',
+        'WebView2 Evergreen Runtime'
+      ],
+      lang: 'C#',
+      syntax: '`"""..."""` (raw string literal, C# 11+) or `@"..."` (escape inner `"` as `""`)',
+      checkSyntax: 'All `"""` raw string literals are closed in pairs',
+      pack: 'dotnet publish -c Release -r win-x64 --self-contained',
+      titlebar: 'Use a borderless `Form` with a custom draggable title bar, or keep the native title bar.'
+    },
+    {
+      key: 'winui',
+      file: 'WinUI3',
+      name: 'WinUI 3 (Windows App SDK)',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`Microsoft.UI.Xaml.Controls.WebView2` control',
+      injection: '`NavigateToString` with the whole HTML document embedded as a C# raw string constant',
+      bridge: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`',
+      bridgeShort: '`CoreWebView2.WebMessageReceived` + `PostWebMessageAsJson`',
+      files: [
+        '`App.csproj` - `Microsoft.WindowsAppSDK` + `Microsoft.Web.WebView2`',
+        '`app.manifest` - unpackaged deployment settings',
+        '`App.xaml` / `App.xaml.cs` - application entry',
+        '`MainWindow.xaml` / `MainWindow.xaml.cs` - window, WebView2 host, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`App.csproj`, `app.manifest`, `App.xaml`, and `MainWindow.xaml` / `MainWindow.xaml.cs` with the embedded HTML',
+      deps: [
+        '.NET SDK 8.0 or later, `Microsoft.WindowsAppSDK`, `Microsoft.Web.WebView2`',
+        'Windows App SDK Runtime and WebView2 Evergreen Runtime'
+      ],
+      lang: 'C#',
+      syntax: '`"""..."""` (raw string literal, C# 11+) or `@"..."` (escape inner `"` as `""`)',
+      checkSyntax: 'All `"""` raw string literals are closed in pairs',
+      pack: 'dotnet publish -c Release -r win-x64',
+      titlebar: 'Extend content into the title bar with `ExtendsContentIntoTitleBar` and `SetTitleBar`, then style the caption buttons.'
+    },
+    {
+      key: 'python',
+      file: 'Python',
+      name: 'Python + pywebview',
+      engine: 'WebView2 on Windows (MSHTML fallback elsewhere)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`webview.create_window(html=UI_HTML)`',
+      injection: 'The whole HTML document embedded as a Python `"""..."""` string constant',
+      bridge: '`js_api=` + `window.pywebview.api.xxx()`, wait for `pywebviewready`',
+      bridgeShort: '`js_api` + `window.pywebview.api`',
+      files: [
+        '`app.py` - window creation, JS API class, startup, and the embedded HTML string (inline `<style>` and `<script>`)',
+        '`requirements.txt` - `pywebview`'
+      ],
+      filesInline: '`app.py` with the embedded HTML, and `requirements.txt`',
+      deps: [
+        '`pip install pywebview`',
+        'WebView2 Evergreen Runtime'
+      ],
+      lang: 'Python',
+      syntax: '`"""..."""`; never use `str.format()` on HTML containing CSS `{}`; use `str.replace()` placeholders',
+      checkSyntax: 'All `"""` blocks are closed in pairs and no `str.format()` touches CSS braces',
+      pack: 'pyinstaller --onefile --windowed --name AppName app.py',
+      titlebar: 'Use the native window title bar; switch to frameless mode only when a drag handler is implemented with `js_api`.'
+    },
+    {
+      key: 'electron',
+      file: 'Electron',
+      name: 'Electron',
+      engine: 'Chromium (bundled with Electron)',
+      engineShort: 'Chromium',
+      engineDetail: 'bundled with Electron',
+      host: '`BrowserWindow` with `webPreferences`',
+      injection: '`loadURL(\'data:text/html;charset=utf-8,\' + encodeURIComponent(UI_HTML))` with the HTML embedded in `main.js`',
+      bridge: '`preload` + `contextBridge` + `ipcRenderer` / `ipcMain`',
+      bridgeShort: '`contextBridge` + `ipcRenderer` / `ipcMain`',
+      files: [
+        '`package.json` - `electron` devDependency and `start` script',
+        '`main.js` - `BrowserWindow` creation, IPC handlers, and the embedded HTML string (inline `<style>` and `<script>`)',
+        '`preload.js` - `contextBridge` API'
+      ],
+      filesInline: '`package.json`, `main.js` with the embedded HTML, and `preload.js`',
+      deps: [
+        '`npm install` (Electron 30 or later)'
+      ],
+      lang: 'JS/TS',
+      syntax: 'Template literals; backticks or `${}` inside HTML must be escaped, or use `String.raw`',
+      checkSyntax: 'Template literals and escaped `${}` are balanced',
+      pack: 'electron-builder --win nsis',
+      titlebar: 'Use `titleBarStyle: \'hidden\'` with `-webkit-app-region: drag` on the custom title bar.'
+    },
+    {
+      key: 'tauri',
+      file: 'Tauri',
+      name: 'Tauri v2',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`WebviewWindowBuilder` with a custom `app://` URI scheme',
+      injection: 'A custom URI scheme protocol in `main.rs` returns the embedded HTML string (no `dist/` folder, no external assets)',
+      bridge: '`window.__TAURI__.invoke` + Rust `#[tauri::command]`',
+      bridgeShort: '`invoke` + Rust command',
+      files: [
+        '`src-tauri/Cargo.toml` - `tauri` v2 dependencies',
+        '`src-tauri/tauri.conf.json` - window and bundle configuration (no `frontendDist`)',
+        '`src-tauri/src/main.rs` - commands, window creation, the custom protocol, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`Cargo.toml`, `tauri.conf.json`, and `main.rs` with the embedded HTML',
+      deps: [
+        '`cargo tauri dev`，Rust 1.77+，`@tauri-apps/api` (optional)'
+      ],
+      lang: 'Rust',
+      syntax: '`r#"..."#`',
+      checkSyntax: 'All `r#"..."#` raw strings are terminated',
+      pack: 'cargo tauri build',
+      titlebar: 'Set `decorations: false` in `tauri.conf.json` and mark the custom title bar with `data-tauri-drag-region`.'
+    },
+    {
+      key: 'cpp',
+      file: 'Cpp',
+      name: 'C++ / Win32',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`ICoreWebView2` (COM) + `ICoreWebView2Controller`',
+      injection: '`NavigateToString` with the whole HTML document embedded as an `R"html(...)html"` literal',
+      bridge: '`WebMessageReceived` + `PostWebMessageAsJson`',
+      bridgeShort: '`WebMessageReceived` + `PostWebMessageAsJson`',
+      files: [
+        '`CMakeLists.txt` - WebView2 SDK headers and libraries',
+        '`main.cpp` - Win32 window creation, WebView2 setup, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`CMakeLists.txt` and `main.cpp` with the embedded HTML',
+      deps: [
+        'MSVC v143 / Visual Studio 2022, Windows SDK 10.0.22621+, WebView2 SDK'
+      ],
+      lang: 'C++',
+      syntax: '`R"html(...)html"`',
+      checkSyntax: 'All `R"html(...)html"` raw strings are terminated',
+      pack: 'MSIX packaging or `.exe` + WebView2 Evergreen Bootstrapper',
+      titlebar: 'Handle `WM_NCHITTEST` yourself to make a borderless custom title bar draggable.'
+    },
+    {
+      key: 'rust',
+      file: 'Rust',
+      name: 'Rust / wry',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`wry::WebViewBuilder`',
+      injection: '`with_html` with the whole HTML document embedded as an `r#"..."#` constant',
+      bridge: '`with_ipc_handler`',
+      bridgeShort: '`ipc_handler`',
+      files: [
+        '`Cargo.toml` - `wry`, `tao`, `serde_json`',
+        '`src/main.rs` - event loop, window, webview, and the embedded HTML string (inline `<style>` and `<script>`)'
+      ],
+      filesInline: '`Cargo.toml` and `src/main.rs` with the embedded HTML',
+      deps: [
+        'Rust 1.77 or later, `cargo add wry tao serde_json`'
+      ],
+      lang: 'Rust',
+      syntax: '`r#"..."#`',
+      checkSyntax: 'All `r#"..."#` raw strings are terminated',
+      pack: 'cargo build --release',
+      titlebar: 'Set `with_decorations(false)` in `tao` and add a drag region in HTML.'
+    },
+    {
+      key: 'html',
+      file: 'HTML',
+      name: 'HTML + CSS + JavaScript',
+      engine: 'Any modern browser (Chromium, Firefox, WebKit)',
+      engineShort: 'the browser',
+      engineDetail: 'Chromium, Firefox, WebKit',
+      host: 'No desktop shell - `index.html` runs directly in a browser',
+      injection: 'One self-contained `index.html` with the full CSS in `<style>` and the full JS in `<script>`',
+      bridge: 'None - the page owns all logic; persist with `localStorage` / IndexedDB',
+      bridgeShort: 'no bridge; `localStorage` / IndexedDB for persistence',
+      files: [
+        '`index.html` - the only file: page structure, inline `<style>` tokens/layout, and inline `<script>` logic'
+      ],
+      filesInline: '`index.html` with inline CSS and JS',
+      deps: [
+        'Any modern browser; no build step, no runtime, no dependencies',
+        'Open `index.html` directly in a browser; no server required'
+      ],
+      lang: 'JavaScript',
+      syntax: 'Template literals; backticks or `${}` inside HTML must be escaped, or use string concatenation',
+      checkSyntax: 'Template literals and escaped `${}` are balanced',
+      pack: 'zip the folder and host it as static files',
+      titlebar: 'No OS window chrome - build a sticky in-page header as the app title bar and keep the layout full-viewport.'
+    },
+    {
+      key: 'wails',
+      file: 'Wails',
+      name: 'Wails v2 (Go)',
+      engine: 'WebView2 (Microsoft Edge, Chromium)',
+      engineShort: 'WebView2',
+      engineDetail: 'Microsoft Edge, Chromium',
+      host: '`wails.Run()` with `WebviewWindow` and `AssetServer`',
+      injection: 'An `AssetServer` handler in `main.go` serves the embedded HTML string (no `frontend/` folder)',
+      bridge: 'Bound Go structs (`wails.Bind`) called from JS as `window.go.main.App.xxx()`; events via `runtime.EventsEmit` / `EventsOn`',
+      bridgeShort: 'Go bindings (`window.go.main.App`) + `runtime` events',
+      files: [
+        '`wails.json` - project configuration (no frontend build hooks)',
+        '`main.go` - `wails.Run()` options, window size, asset server handler, and the embedded HTML string (inline `<style>` and `<script>`)',
+        '`app.go` - bound Go struct with application logic',
+        '`go.mod` - module and `github.com/wailsapp/wails/v2` dependency'
+      ],
+      filesInline: '`wails.json`, `main.go` with the embedded HTML, `app.go`, and `go.mod`',
+      deps: [
+        'Go 1.21 or later, `go install github.com/wailsapp/wails/v2/cmd/wails@latest`',
+        'WebView2 Evergreen Runtime (preinstalled on Windows 11)'
+      ],
+      lang: 'Go',
+      syntax: 'Backtick raw strings for the HTML; a raw string cannot contain backticks, so keep JS template literals out of it',
+      checkSyntax: 'All backtick raw strings are terminated and contain no backticks',
+      pack: 'wails build -platform windows/amd64',
+      titlebar: 'Set `Frameless: true` in `wails.Run` and mark the custom title bar with `style="--wails-draggable: drag"`.'
+    }
+  ];
+
+  /* ---------------- 状态 ---------------- */
+  var baseMarkdown = '';
+  var currentStyle = STYLES[0];
+  var currentFramework = FRAMEWORKS[0];
+  var generated = '';
+  var currentFileName = '';
+  var theme = 'light';
+
+  /* ---------------- 文本工具 ---------------- */
+  function slug(value) {
+    return String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  function bulletLines(list) {
+    return list.map(function (item) { return '- ' + item; }).join('\n');
+  }
+
+  function colorLines(list) {
+    return list.map(function (pair) { return '- ' + pair[0] + ' `' + pair[1] + '`'; }).join('\n');
+  }
+
+  function baseSection(heading) {
+    if (!baseMarkdown) {
+      return '';
+    }
+    var escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var match = baseMarkdown.match(new RegExp('## ' + escaped + '\\r?\\n([\\s\\S]*?)(?=\\r?\\n## |$)'));
+    return match ? match[1].trim() : '';
+  }
+
+  function adaptText(text, style, framework) {
+    return text
+      .replace(/\*\*WebView2\*\* \(Microsoft Edge \/ Chromium\)/g,
+        '**' + framework.engineShort + '** (' + framework.engineDetail + ')')
+      .replace(/Windows 11 Fluent Design/g, style.name)
+      .replace(/Windows 11 Fluent/g, style.name)
+      .replace(/\bFluent\b/g, style.short)
+      .replace(/\bWebView2\b/g, framework.engineShort);
+  }
+
+  /* ---------------- 文档生成 ---------------- */
+  function buildMarkdown(style, framework) {
+    var F = '```';
+    var skillName = slug(style.short) + '-' + slug(framework.file) + '-app';
+    var isPlainHtml = framework.key === 'html';
+    var title = style.name + ' + ' + framework.name +
+      (isPlainHtml ? ' Web App Generator' : ' Desktop App Generator');
+    var article = /^[aeiou]/i.test(framework.name) ? 'an ' : 'a ';
+    var inlineUiRule = isPlainHtml
+      ? 'one self-contained `index.html` with inline `<style>` and `<script>`'
+      : 'a single HTML string embedded inline in the host source file, with inline `<style>` and `<script>`';
+    var description;
+    if (isPlainHtml) {
+      description = 'Generates standalone web applications that follow the ' + style.name +
+        ' design language in plain HTML/CSS/JavaScript. Use this when the user mentions "' +
+        style.name + '", "' + style.short + ' UI", or asks for a ' + style.name +
+        ' interface built without any framework. The result runs directly in ' +
+        framework.engineShort + ' with no build step. Always output complete, runnable code.';
+    } else {
+      description = 'Generates desktop applications that follow the ' + style.name +
+        ' design language inside ' + article + framework.name + ' shell. Use this when the user mentions "' +
+        style.name + '", "' + style.short + ' UI", or asks for a ' + style.name +
+        ' interface built with ' + framework.name + '. The UI is a single HTML document with inline CSS and JS, ' +
+        'embedded directly in the ' + framework.lang + ' source and rendered by ' + framework.engineShort +
+        '. Always output complete, runnable code with correct string boundaries.';
+    }
+
+    // When to Use：复用原始技能文档，并按所选风格/框架改写
+    var whenToUse = baseSection('When to Use');
+    if (whenToUse) {
+      whenToUse = adaptText(whenToUse, style, framework)
+        .replace(/- The host software framework is[^\n]*\n?/,
+          '- The host shell is **' + framework.name + '**; generate only this host and never mix frameworks.\n');
+      if (isPlainHtml) {
+        whenToUse = whenToUse
+          .replace(/- A desktop application must present[^\n]*\n?/,
+            '- A web page must present the **' + style.name + '** visual language\n')
+          .replace(/- The interface is rendered with[^\n]*\n?/,
+            '- The app is a standalone static page opened directly in a browser, with no desktop shell and no build step\n')
+          .replace(/- HTML\/CSS\/JS (?:ships|is distributed)[^\n]*\n?/,
+            '- The whole app is one self-contained `index.html` with inline `<style>` and `<script>`\n')
+          .replace(/- Light\/dark theme switching is needed[^\n]*\n?/,
+            '- Light/dark theme switching is needed, following the browser `prefers-color-scheme`\n');
+      } else {
+        whenToUse = whenToUse
+          .replace(/- HTML\/CSS\/JS (?:ships|is distributed)[^\n]*\n?/,
+            '- The whole UI is embedded inline in the host source file as a single HTML string (inline `<style>` and `<script>`)\n');
+      }
+    } else if (isPlainHtml) {
+      whenToUse = [
+        '- A web page must present the **' + style.name + '** visual language',
+        '- The app is a standalone static page opened directly in a browser, with no desktop shell and no build step',
+        '- The whole app is one self-contained `index.html` with inline `<style>` and `<script>`',
+        '- Light/dark theme switching is required and follows the browser `prefers-color-scheme`'
+      ].join('\n');
+    } else {
+      whenToUse = [
+        '- A desktop application must present the **' + style.name + '** visual language',
+        '- The interface is rendered with **' + framework.engineShort + '** rather than opened in a browser',
+        '- The host shell is **' + framework.name + '**; generate only this host and never mix frameworks',
+        '- The whole UI is embedded inline in the host source file as a single HTML string (inline `<style>` and `<script>`)',
+        '- Light/dark theme switching is required and follows the system theme'
+      ].join('\n');
+    }
+
+    // Hard Output Requirements：替换依赖说明与字符串边界表
+    var hard = baseSection('Hard Output Requirements');
+    if (hard) {
+      hard = hard
+        .replace(/multi-file frameworks such as WPF\/Electron\/Tauri/,
+          'the ' + framework.name + ' project')
+        .replace(/\(`\.csproj`, `package\.json`, `Cargo\.toml`, entry file, UI file, etc\.\)/,
+          '(' + framework.filesInline + ')')
+        .replace(/3\. A comment at the top of each file must state the environment dependencies:[\s\S]*?(?=\r?\n4\. )/,
+          '3. A comment at the top of each file must state the environment dependencies:\n' +
+          framework.deps.map(function (dep) { return '   - ' + dep; }).join('\n') + '\n')
+        .replace(/ {3}\| Language \| Recommended syntax \|[\s\S]*?(?=\r?\n5\. )/,
+          '   | Language | Recommended syntax |\n   | --- | --- |\n   | ' +
+          framework.lang + ' | ' + framework.syntax + ' |\n');
+      hard += '\n8. The complete UI must be ' + inlineUiRule +
+        '; never split styling or logic into separate asset files.';
+    } else {
+      hard = [
+        '1. Always output **complete, directly buildable and runnable** code; the ' + framework.name +
+          ' project must include every necessary file (' + framework.filesInline + ').',
+        '2. `...`, `omitted`, `the rest is the same as above`, `TODO`, and `see above` are forbidden.',
+        '3. A comment at the top of each file must state the environment dependencies:',
+        framework.deps.map(function (dep) { return '   - ' + dep; }).join('\n'),
+        '4. All string boundaries must be closed in pairs:',
+        '',
+        '   | Language | Recommended syntax |',
+        '   | --- | --- |',
+        '   | ' + framework.lang + ' | ' + framework.syntax + ' |',
+        '',
+        '5. All HTML tags, `<style>`, and `<script>` must be closed.',
+        '6. Write functional comments only, not tutorial comments.',
+        '7. Curly braces in CSS must not be interpreted by any language\'s formatting function.',
+        '8. The complete UI must be ' + inlineUiRule +
+          '; never split styling or logic into separate asset files.'
+      ].join('\n');
+    }
+
+    // Self-Check List：复用原始清单并追加风格化检查项
+    var checks = baseSection('Self-Check List (Check Each Item Before Output)');
+    if (checks) {
+      checks = adaptText(checks, style, framework)
+        .replace(/- \[ \] All `"""` are closed in pairs/,
+          '- [ ] ' + framework.checkSyntax)
+        .replace(/- \[ \] Colors go through CSS variables, and theme switching has a transition/,
+          '- [ ] Colors go through CSS variables, and theme switching has a transition\n- [ ] ' + style.check);
+    } else {
+      checks = [
+        '- [ ] ' + framework.checkSyntax,
+        '- [ ] Colors go through CSS variables, and theme switching has a transition',
+        '- [ ] ' + style.check,
+        '- [ ] All `<style>` and `<script>` blocks are closed'
+      ].join('\n');
+    }
+    checks += '\n- [ ] ' + (isPlainHtml
+      ? 'All CSS and JS are inlined in the single `index.html`; no external asset files'
+      : 'The UI is a single HTML string embedded in the host source; no separate `.html`, `.css`, or `.js` files');
+
+    var lines = [];
+
+    lines.push('---');
+    lines.push('name: ' + skillName);
+    lines.push('description: ' + description);
+    lines.push('---');
+    lines.push('');
+    lines.push('# ' + title);
+    lines.push('');
+
+    lines.push('## When to Use');
+    lines.push('');
+    lines.push(whenToUse);
+    lines.push('');
+
+    lines.push('## Technology Stack Definition');
+    lines.push('');
+    lines.push('| Dimension | Constraint |');
+    lines.push('| --- | --- |');
+    lines.push('| Visual language | ' + style.name + ' (see the tokens below) |');
+    lines.push('| Rendering engine | ' + framework.engine + ' |');
+    lines.push('| Host framework | ' + framework.name +
+      (isPlainHtml ? '; no desktop shell and no third-party framework' : '; never substitute another shell without explicit permission') + ' |');
+    lines.push('| UI carrier | ' + (isPlainHtml
+      ? 'HTML + CSS + JavaScript inlined in one `index.html`'
+      : 'HTML + CSS + JavaScript embedded inline in the host source as a single string') + ' |');
+    lines.push('| Bridge | ' + framework.bridgeShort + ' |');
+    lines.push('');
+
+    lines.push('## Target Framework Integration');
+    lines.push('');
+    lines.push(isPlainHtml
+      ? 'The generated app is a standalone static web app built with **' + framework.name + '**. The ' +
+        style.name + ' visual language is delivered as one `index.html` with all CSS and JS inlined.'
+      : 'The generated app is built for **' + framework.name + '**. The ' + style.name +
+        ' visual language is delivered as one HTML string embedded inline in the source and hosted by the framework below.');
+    lines.push('');
+    lines.push('| Host framework | Rendering host | UI injection | Bridge mechanism |');
+    lines.push('| --- | --- | --- | --- |');
+    lines.push('| ' + framework.name + ' | ' + framework.host + ' | ' + framework.injection + ' | ' + framework.bridge + ' |');
+    lines.push('');
+    lines.push('Required project files:');
+    lines.push('');
+    framework.files.forEach(function (file, index) {
+      lines.push((index + 1) + '. ' + file);
+    });
+    lines.push('');
+    lines.push('Generation rules:');
+    lines.push('');
+    lines.push('1. Generate a complete, minimal runnable project for the host framework above; never switch shells.');
+    lines.push(isPlainHtml
+      ? '2. Keep everything in plain HTML/CSS/JS; there is no host bridge, so all state stays in the page.'
+      : '2. Keep the interface in HTML/CSS/JS and pass data through the bridge listed above.');
+    if (isPlainHtml) {
+      lines.push('3. Stay framework-free: plain HTML/CSS/JS only - no bundler, no UI library, no desktop shell, no CDN dependency.');
+    } else {
+      lines.push('3. Never replace the rendering engine with `WebBrowser` (IE engine), CEF, or a direct browser call.');
+    }
+    lines.push('4. The complete UI must be ' + inlineUiRule + '; no separate asset files.');
+    lines.push('');
+    lines.push('Environment dependencies:');
+    lines.push('');
+    framework.deps.forEach(function (dep) {
+      lines.push('- ' + dep);
+    });
+    lines.push('');
+
+    lines.push('## Hard Output Requirements');
+    lines.push('');
+    lines.push(hard);
+    lines.push('');
+
+    // 风格规范
+    lines.push('## ' + style.name + ' Design Specification');
+    lines.push('');
+    lines.push('### Color Tokens');
+    lines.push('');
+    lines.push('Light:');
+    lines.push(colorLines(style.colors.light));
+    lines.push('');
+    lines.push('Dark:');
+    lines.push(colorLines(style.colors.dark));
+    lines.push('');
+    lines.push('All colors must go through CSS variables, and theme switching only changes `html[data-theme]`.');
+    lines.push('');
+    lines.push('### Typography');
+    lines.push('');
+    lines.push(F + 'css');
+    lines.push('font-family: ' + style.font + ';');
+    lines.push(F);
+    lines.push('');
+    lines.push('Use ' + style.mono + ' for monospaced content.');
+    if (style.typographyNote) {
+      lines.push('');
+      lines.push(style.typographyNote);
+    }
+    lines.push('');
+    lines.push('### Sizing and Corner Radius');
+    lines.push('');
+    lines.push(bulletLines(style.sizing));
+    lines.push('');
+    lines.push('### Motion');
+    lines.push('');
+    lines.push(bulletLines(style.motion));
+    lines.push('');
+    lines.push('### Shadows and Depth');
+    lines.push('');
+    lines.push(bulletLines(style.shadows));
+    lines.push('');
+    lines.push('### Interaction Details');
+    lines.push('');
+    lines.push(bulletLines(style.interactions));
+    lines.push('');
+    lines.push('### Backend Responsibilities');
+    lines.push('');
+    if (isPlainHtml) {
+      lines.push('All logic runs in the page. Use plain ' + framework.lang +
+        ' for interaction, `localStorage` / IndexedDB for persistence, and the File System Access API for files.');
+    } else {
+      lines.push('Implement functionality in HTML wherever possible, and use ' + framework.lang +
+        ' only for what the browser cannot do: window chrome, file dialogs, clipboard, and persistence.');
+    }
+    lines.push('');
+    lines.push(isPlainHtml ? '### Default Page Configuration' : '### Default Window Configuration');
+    lines.push('');
+    if (isPlainHtml) {
+      lines.push('- Fills the browser viewport, with a max content width of 1100px and responsive stacking under 720px');
+      lines.push('- The page must have a progressive animation on load');
+    } else {
+      lines.push('- Displayed centered on screen, default 800*600 (grow the size when the layout needs more room)');
+      lines.push('- The window must have a progressive animation on startup');
+    }
+    lines.push('- Title bar: ' + framework.titlebar);
+    lines.push('');
+
+    lines.push('## Self-Check List (Check Each Item Before Output)');
+    lines.push('');
+    lines.push(checks);
+    lines.push('');
+
+    lines.push('## Packaging Configuration');
+    lines.push('');
+    lines.push('| Framework | Command |');
+    lines.push('| --- | --- |');
+    lines.push('| ' + framework.name + ' | `' + framework.pack + '` |');
+    lines.push('');
+
+    return lines.join('\n');
+  }
+
+  /* ---------------- Markdown 渲染 ---------------- */
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function inlineMd(text) {
+    var html = escapeHtml(text);
+    html = html.replace(/`([^`]+)`/g, function (_, code) { return '<code>' + code + '</code>'; });
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+    html = html.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+    return html;
+  }
+
+  function splitRow(row) {
+    var text = row.trim();
+    if (text.charAt(0) === '|') { text = text.slice(1); }
+    if (text.charAt(text.length - 1) === '|') { text = text.slice(0, -1); }
+    return text.split('|').map(function (cell) { return cell.trim(); });
+  }
+
+  function renderMarkdown(markdown) {
+    var lines = String(markdown).replace(/\r\n/g, '\n').split('\n');
+    var out = [];
+    var i = 0;
+
+    if (lines[0] === '---') {
+      var meta = [];
+      var j = 1;
+      while (j < lines.length && lines[j] !== '---') {
+        meta.push(lines[j]);
+        j += 1;
+      }
+      if (j < lines.length) {
+        out.push('<div class="fm">' + meta.map(function (line) {
+          var index = line.indexOf(':');
+          if (index < 0) {
+            return '<div class="fm-row">' + inlineMd(line) + '</div>';
+          }
+          return '<div class="fm-row"><span class="fm-key">' + inlineMd(line.slice(0, index).trim()) +
+            '</span><span class="fm-val">' + inlineMd(line.slice(index + 1).trim()) + '</span></div>';
+        }).join('') + '</div>');
+        i = j + 1;
+      }
+    }
+
+    while (i < lines.length) {
+      var line = lines[i];
+
+      if (!line.trim()) {
+        i += 1;
+        continue;
+      }
+
+      if (line.indexOf('```') === 0) {
+        var lang = line.slice(3).trim();
+        var buffer = [];
+        i += 1;
+        while (i < lines.length && lines[i].indexOf('```') !== 0) {
+          buffer.push(lines[i]);
+          i += 1;
+        }
+        i += 1;
+        out.push('<pre><code' + (lang ? ' class="lang-' + escapeHtml(lang) + '"' : '') + '>' +
+          escapeHtml(buffer.join('\n')) + '</code></pre>');
+        continue;
+      }
+
+      if (/^#### /.test(line)) { out.push('<h4>' + inlineMd(line.slice(5)) + '</h4>'); i += 1; continue; }
+      if (/^### /.test(line)) { out.push('<h3>' + inlineMd(line.slice(4)) + '</h3>'); i += 1; continue; }
+      if (/^## /.test(line)) { out.push('<h2>' + inlineMd(line.slice(3)) + '</h2>'); i += 1; continue; }
+      if (/^# /.test(line)) { out.push('<h1>' + inlineMd(line.slice(2)) + '</h1>'); i += 1; continue; }
+
+      if (/^---+$/.test(line.trim())) { out.push('<hr>'); i += 1; continue; }
+
+      if (/^\s*>\s?/.test(line)) {
+        var quote = [];
+        while (i < lines.length && /^\s*>\s?/.test(lines[i])) {
+          quote.push(lines[i].replace(/^\s*>\s?/, ''));
+          i += 1;
+        }
+        out.push('<blockquote>' + quote.map(inlineMd).join('<br>') + '</blockquote>');
+        continue;
+      }
+
+      if (line.trim().charAt(0) === '|' && i + 1 < lines.length &&
+          /^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i + 1])) {
+        var header = splitRow(line);
+        var rows = [];
+        i += 2;
+        while (i < lines.length && /^\s*\|/.test(lines[i])) {
+          rows.push(splitRow(lines[i]));
+          i += 1;
+        }
+        out.push('<table><thead><tr>' + header.map(function (cell) {
+          return '<th>' + inlineMd(cell) + '</th>';
+        }).join('') + '</tr></thead><tbody>' + rows.map(function (row) {
+          return '<tr>' + row.map(function (cell) {
+            return '<td>' + inlineMd(cell) + '</td>';
+          }).join('') + '</tr>';
+        }).join('') + '</tbody></table>');
+        continue;
+      }
+
+      if (/^\s*([-*+]|\d+\.)\s+/.test(line)) {
+        var ordered = /^\s*\d+\.\s+/.test(line);
+        var items = [];
+        while (i < lines.length && /^\s*([-*+]|\d+\.)\s+/.test(lines[i])) {
+          items.push(lines[i].replace(/^\s*([-*+]|\d+\.)\s+/, ''));
+          i += 1;
+        }
+        out.push('<' + (ordered ? 'ol' : 'ul') + '>' + items.map(function (item) {
+          var task = item.match(/^\[([ xX])\]\s*(.*)$/);
+          if (task) {
+            var checked = task[1] !== ' ';
+            return '<li class="task"><span class="box' + (checked ? ' checked' : '') + '"></span>' +
+              inlineMd(task[2]) + '</li>';
+          }
+          return '<li>' + inlineMd(item) + '</li>';
+        }).join('') + '</' + (ordered ? 'ol' : 'ul') + '>');
+        continue;
+      }
+
+      var paragraph = [line];
+      i += 1;
+      while (i < lines.length && lines[i].trim() &&
+             !/^(#|```|\s*([-*+]|\d+\.)\s|\s*>|\|)/.test(lines[i])) {
+        paragraph.push(lines[i]);
+        i += 1;
+      }
+      out.push('<p>' + paragraph.map(inlineMd).join('<br>') + '</p>');
+    }
+
+    return out.join('\n');
+  }
+
+  /* ---------------- DOM ---------------- */
+  var styleListEl = document.getElementById('styleList');
+  var fwListEl = document.getElementById('fwList');
+  var styleHintEl = document.getElementById('styleHint');
+  var fwHintEl = document.getElementById('fwHint');
+  var fileNameEl = document.getElementById('fileName');
+  var mdViewEl = document.getElementById('mdView');
+  var mdSourceEl = document.getElementById('mdSource');
+  var previewPane = document.getElementById('previewPane');
+  var sourcePane = document.getElementById('sourcePane');
+  var toastWrap = document.getElementById('toastWrap');
+  var themeBtn = document.getElementById('themeBtn');
+  var sampleBoxEl = document.getElementById('sampleBox');
+  var sampleFrame = document.getElementById('sampleFrame');
+  var sampleHintEl = document.getElementById('sampleHint');
+
+  var ICON_SUN = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2">' +
+    '<circle cx="8" cy="8" r="3.1" /><path d="M8 1.4v1.6M8 13v1.6M1.4 8h1.6M13 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" /></svg>';
+  var ICON_MOON = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2">' +
+    '<path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z" /></svg>';
+  var ICON_MAX = '<svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="2.4" y="2.4" width="7.2" height="7.2" rx="1" /></svg>';
+  var ICON_RESTORE = '<svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.1">' +
+    '<rect x="2.2" y="3.6" width="6.2" height="6.2" rx="1" /><path d="M4.4 2.2h5.4v5.4" /></svg>';
+
+  var maximizedState = false;
+
+  function applyLanguage(next) {
+    if (!I18N[next]) {
+      next = 'en-US';
+    }
+    language = next;
+    document.documentElement.setAttribute('lang', next);
+
+    document.querySelectorAll('[data-i18n]').forEach(function (element) {
+      element.textContent = t(element.getAttribute('data-i18n'));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(function (element) {
+      element.title = t(element.getAttribute('data-i18n-title'));
+    });
+
+    themeBtn.title = t(theme === 'light' ? 'themeDark' : 'themeLight');
+    document.getElementById('maxBtn').title = t(maximizedState ? 'restore' : 'maximize');
+    styleHintEl.textContent = t('count', { n: STYLES.length });
+    fwHintEl.textContent = t('count', { n: FRAMEWORKS.length });
+
+    // 风格简介跟随语言
+    renderStyleList();
+
+    var select = document.getElementById('langSelect');
+    if (select) {
+      select.value = language;
+    }
+  }
+
+  function initLanguageSelect() {
+    var select = document.getElementById('langSelect');
+    if (!select) {
+      return;
+    }
+
+    select.innerHTML = LANGUAGES.map(function (item) {
+      return '<option value="' + item[0] + '">' + item[1] + '</option>';
+    }).join('');
+    select.value = language;
+    select.addEventListener('change', function () {
+      applyLanguage(select.value);
+      post({ type: 'language', language: language });
+    });
+  }
+
+  function setTheme(value) {
+    theme = value === 'light' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtn.innerHTML = theme === 'light' ? ICON_MOON : ICON_SUN;
+    themeBtn.title = t(theme === 'light' ? 'themeDark' : 'themeLight');
+    renderSample();
+  }
+
+  function setMaximized(value) {
+    maximizedState = !!value;
+    document.getElementById('maxBtn').innerHTML = maximizedState ? ICON_RESTORE : ICON_MAX;
+    document.getElementById('maxBtn').title = t(maximizedState ? 'restore' : 'maximize');
+  }
+
+  function showToast(text, kind) {
+    var el = document.createElement('div');
+    el.className = 'toast' + (kind === 'error' ? ' error' : '');
+    el.textContent = text;
+    toastWrap.appendChild(el);
+    window.setTimeout(function () {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(6px)';
+      window.setTimeout(function () { el.remove(); }, 240);
+    }, 2200);
+  }
+
+  /* ---------------- 风格示例 ---------------- */
+  function cleanToken(value) {
+    return String(value).replace(/\s*\(same as background\)/i, '');
+  }
+
+  function styleToken(style, mode, names) {
+    var list = style.colors[mode] || [];
+    for (var n = 0; n < names.length; n++) {
+      var lower = names[n].toLowerCase();
+      var exact = '';
+      var prefixed = '';
+      for (var i = 0; i < list.length; i++) {
+        var label = list[i][0].toLowerCase();
+        if (label === lower) {
+          exact = list[i][1];
+          break;
+        }
+        if (!prefixed && label.indexOf(lower + ' ') === 0) {
+          prefixed = list[i][1];
+        }
+      }
+      if (exact || prefixed) {
+        return cleanToken(exact || prefixed);
+      }
+    }
+    return '';
+  }
+
+  function styleShadow(style) {
+    var line = (style.shadows && style.shadows[0]) || '';
+    var match = line.match(/`([^`]+)`/);
+    return match ? match[1] : 'none';
+  }
+
+  /* 每个风格的示例渲染规则：按各设计语言通用规范呈现，而不是按导出的 md 约束 */
+  var SAMPLE_PROFILES = {
+    fluent: {
+      vars: '--r-card:8px;--r-btn:4px;--r-input:4px;--r-chip:999px;',
+      css: [
+        '.card{backdrop-filter:blur(28px) saturate(1.6)}',
+        '.btn.primary{box-shadow:0 1px 3px rgba(0,0,0,.12)}',
+        '.switch{background:var(--accent)}',
+        '.track{height:4px}',
+        '.logo{border-radius:5px}'
+      ].join('\n')
+    },
+    material: {
+      vars: '--r-card:14px;--r-btn:999px;--r-input:4px;--r-chip:8px;',
+      css: [
+        '.card{border:0;box-shadow:0 1px 2px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.07)}',
+        '.btn{border:0}',
+        '.btn.primary{box-shadow:0 1px 2px rgba(0,0,0,.20)}',
+        '.input{border:0;background:var(--hover)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.switch{background:var(--accent)}',
+        '.logo{border-radius:50%}'
+      ].join('\n')
+    },
+    cupertino: {
+      vars: '--r-card:12px;--r-btn:10px;--r-input:10px;--r-chip:999px;',
+      css: [
+        '.card{border:0;box-shadow:0 1px 2px rgba(0,0,0,.05)}',
+        '.btn{border:0;background:var(--hover);color:var(--accent);font-weight:600}',
+        '.btn.primary{color:var(--accent-text)}',
+        '.input{border:0;background:var(--hover)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.switch{background:#34C759}',
+        '.logo{border-radius:7px}'
+      ].join('\n')
+    },
+    ant: {
+      vars: '--r-card:8px;--r-btn:6px;--r-input:6px;--r-chip:4px;',
+      css: [
+        '.card{box-shadow:0 1px 2px rgba(0,0,0,.03),0 2px 8px rgba(0,0,0,.05)}',
+        '.btn.primary{box-shadow:0 2px 0 rgba(5,145,255,.12)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.track{height:6px}',
+        '.switch{background:var(--accent)}'
+      ].join('\n')
+    },
+    neu: {
+      vars: '--r-card:16px;--r-btn:10px;--r-input:8px;--r-chip:999px;',
+      css: [
+        '.card{border:0;background:var(--bg);box-shadow:-6px -6px 12px var(--neu-light),6px 6px 12px var(--neu-dark)}',
+        '.btn{border:0;box-shadow:-3px -3px 6px var(--neu-light),3px 3px 6px var(--neu-dark)}',
+        '.btn:hover{background:transparent;box-shadow:-4px -4px 8px var(--neu-light),4px 4px 8px var(--neu-dark)}',
+        '.btn:active{transform:none;box-shadow:inset -2px -2px 5px var(--neu-light),inset 2px 2px 5px var(--neu-dark)}',
+        '.btn.primary{background:var(--accent);box-shadow:-3px -3px 6px var(--neu-light),3px 3px 6px var(--neu-dark)}',
+        '.input{border:0;background:var(--bg);box-shadow:inset 2px 2px 5px var(--neu-dark),inset -2px -2px 5px var(--neu-light)}',
+        '.track{background:var(--bg);box-shadow:inset 2px 2px 4px var(--neu-dark)}',
+        '.badge{border:0;box-shadow:-2px -2px 4px var(--neu-light),2px 2px 4px var(--neu-dark)}',
+        '.switch{background:var(--bg);box-shadow:inset 2px 2px 4px var(--neu-dark)}',
+        '.logo{box-shadow:-2px -2px 5px var(--neu-light),2px 2px 5px var(--neu-dark)}'
+      ].join('\n')
+    },
+    bootstrap: {
+      vars: '--r-card:8px;--r-btn:6px;--r-input:6px;--r-chip:999px;',
+      css: [
+        '.card{box-shadow:0 1px 2px rgba(0,0,0,.07)}',
+        '.badge{border:0;background:var(--accent);color:var(--accent-text)}',
+        '.switch{background:var(--accent)}',
+        '.btn.primary{box-shadow:inset 0 -2px 0 rgba(0,0,0,.10)}'
+      ].join('\n')
+    },
+    saas: {
+      vars: '--r-card:12px;--r-btn:8px;--r-input:8px;--r-chip:999px;',
+      css: [
+        '.card{box-shadow:0 1px 3px rgba(15,23,42,.09),0 1px 2px rgba(15,23,42,.05)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.logo{background:linear-gradient(135deg,var(--accent),rgba(255,255,255,.55))}',
+        '.btn.primary{box-shadow:0 1px 2px rgba(79,70,229,.35)}',
+        '.switch{background:var(--accent)}'
+      ].join('\n')
+    },
+    glass: {
+      backdrop: '<div class="orb o1"></div><div class="orb o2"></div>',
+      vars: '--r-card:16px;--r-btn:10px;--r-input:8px;--r-chip:999px;',
+      css: [
+        'body{position:relative}',
+        '.orb{position:fixed;border-radius:50%;filter:blur(26px);opacity:.55;pointer-events:none}',
+        '.o1{width:150px;height:150px;left:-36px;top:-44px;background:#A5B4FC}',
+        '.o2{width:170px;height:170px;right:-48px;bottom:-66px;background:#F9A8D4}',
+        '.app{position:relative;z-index:1}',
+        '.card{backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(30,27,75,.16);border:1px solid var(--stroke)}',
+        '.btn{backdrop-filter:blur(8px);background:var(--hover)}',
+        '.input{backdrop-filter:blur(8px)}',
+        '.badge{backdrop-filter:blur(8px)}',
+        '.switch i{background:var(--accent)}'
+      ].join('\n')
+    },
+    flat: {
+      vars: '--r-card:6px;--r-btn:4px;--r-input:4px;--r-chip:4px;',
+      css: [
+        '.card{border:0;box-shadow:none}',
+        '.btn{border:0;background:var(--hover)}',
+        '.btn.primary{background:var(--accent)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.input{border:0;background:var(--hover)}',
+        '.track{background:var(--hover)}',
+        '.logo{border-radius:4px}'
+      ].join('\n')
+    },
+    skeuo: {
+      vars: '--r-card:8px;--r-btn:5px;--r-input:5px;--r-chip:4px;',
+      css: [
+        '.card{background-image:linear-gradient(180deg,rgba(255,255,255,.38),rgba(0,0,0,.05));border-color:var(--stroke-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 2px 4px rgba(0,0,0,.20)}',
+        '.btn{background-image:linear-gradient(180deg,rgba(255,255,255,.55),rgba(0,0,0,.06));box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 1px 2px rgba(0,0,0,.22)}',
+        '.btn:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}',
+        '.btn.primary{background-image:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.18)),linear-gradient(var(--accent),var(--accent))}',
+        '.logo{background-image:linear-gradient(180deg,rgba(255,255,255,.55),rgba(0,0,0,.15)),linear-gradient(var(--accent),var(--accent));box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 2px rgba(0,0,0,.25)}',
+        '.track{box-shadow:inset 0 1px 3px rgba(0,0,0,.30)}',
+        '.input{box-shadow:inset 0 1px 3px rgba(0,0,0,.18)}'
+      ].join('\n')
+    },
+    neon: {
+      vars: '--r-card:4px;--r-btn:4px;--r-input:4px;--r-chip:2px;',
+      css: [
+        '.app{position:relative}',
+        '.app::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}',
+        '.title{color:var(--accent);text-shadow:0 0 10px var(--accent)}',
+        '.card{box-shadow:0 0 14px rgba(0,240,255,.16),inset 0 0 22px rgba(255,46,151,.08);border-color:var(--stroke)}',
+        '.btn{border-color:var(--accent);color:var(--accent);box-shadow:0 0 6px rgba(0,240,255,.25)}',
+        '.btn.primary{background:var(--accent);color:var(--accent-text);box-shadow:0 0 16px var(--accent)}',
+        '.badge{border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(0,240,255,.25)}',
+        '.track i{box-shadow:0 0 10px var(--accent)}',
+        '.switch{background:transparent;border:1px solid var(--accent)}',
+        '.switch i{background:var(--accent);box-shadow:0 0 6px var(--accent)}',
+        '.chip.active{box-shadow:0 0 8px var(--accent)}',
+        '.logo{box-shadow:0 0 10px var(--accent)}'
+      ].join('\n')
+    },
+    corporate: {
+      vars: '--r-card:3px;--r-btn:3px;--r-input:3px;--r-chip:3px;',
+      css: [
+        '.grid{gap:6px}',
+        '.card{box-shadow:none;padding:8px 9px;background-image:repeating-linear-gradient(180deg,transparent 0 25px,var(--hover) 25px 26px)}',
+        '.card-title{text-transform:uppercase;letter-spacing:.06em;font-size:9.5px;color:var(--text-2)}',
+        '.btn{height:22px;font-size:10px}',
+        '.badge{border:0;background:var(--hover);border-radius:3px;text-transform:uppercase;letter-spacing:.05em;font-size:9px}',
+        '.track{height:4px;border-radius:2px}',
+        '.muted{font-size:9.5px}',
+        '.logo{border-radius:3px}'
+      ].join('\n')
+    },
+    pixel: {
+      vars: '--r-card:0px;--r-btn:0px;--r-input:0px;--r-chip:0px;',
+      css: [
+        'body{background-image:radial-gradient(var(--stroke) 1px,transparent 1px);background-size:6px 6px}',
+        '.card{border:2px solid var(--text);box-shadow:4px 4px 0 var(--text)}',
+        '.btn{border:2px solid var(--text);box-shadow:2px 2px 0 var(--text);background:var(--card);font-weight:700;text-transform:uppercase;font-size:9px}',
+        '.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--text)}',
+        '.btn.primary{background:var(--accent);color:var(--accent-text);border-color:var(--text)}',
+        '.badge{border:2px solid var(--text);box-shadow:2px 2px 0 var(--text);text-transform:uppercase}',
+        '.logo{border:2px solid var(--text);box-shadow:2px 2px 0 var(--text)}',
+        '.track{height:8px;background:var(--bg);border:2px solid var(--text);box-shadow:2px 2px 0 var(--text)}',
+        '.track i{background:var(--accent)}',
+        '.input{border:2px solid var(--text)}',
+        '.switch{height:16px;background:var(--bg);border:2px solid var(--text)}',
+        '.switch i{top:1px;left:1px;width:10px;height:10px;background:var(--accent);border:1px solid var(--text)}',
+        '.chip{border:2px solid var(--text)}'
+      ].join('\n')
+    },
+    warm: {
+      vars: '--r-card:16px;--r-btn:999px;--r-input:10px;--r-chip:999px;',
+      css: [
+        '.card{box-shadow:0 3px 16px rgba(62,44,28,.10)}',
+        '.btn{border:0;background:var(--hover)}',
+        '.badge{border:0;background:var(--hover)}',
+        '.track{height:6px}',
+        '.logo{border-radius:50%}'
+      ].join('\n')
+    },
+    luna: {
+      chrome: true,
+      vars: '--r-card:0px;--r-btn:3px;--r-input:2px;--r-chip:2px;',
+      css: [
+        '.app{gap:6px}',
+        '.chrome{display:flex;align-items:center;justify-content:space-between;height:22px;padding:0 5px;background:linear-gradient(180deg,#0058EE,#3A93FF 8%,#0054E3 40%,#0054E3 88%,#0046D5);color:#fff;font-size:10px;font-weight:700;border-radius:4px 4px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}',
+        '.chrome-title{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}',
+        '.chrome-btns{display:flex;gap:2px}',
+        '.chrome-btns i{width:13px;height:13px;display:grid;place-items:center;font-style:normal;font-size:8px;background:linear-gradient(180deg,#4C9BFF,#0054E3);border:1px solid #003C74;border-radius:2px}',
+        '.card{border:1px solid #919B9C;box-shadow:inset 0 1px 0 #FFFFFF,1px 1px 0 rgba(0,0,0,.10)}',
+        '.card-title{background:linear-gradient(180deg,#FFFFFF,#EFEBE0);color:#1A1A1A;margin:-9px -10px 7px;padding:3px 8px;border-bottom:1px solid #ACA899;font-size:10.5px}',
+        '.btn{background:linear-gradient(180deg,#FFFFFF,#F1EFE2 45%,#DCD8CC);border:1px solid #003C74;box-shadow:inset 0 1px 0 #fff}',
+        '.btn.primary{background:linear-gradient(180deg,#5EA0FF,#0A58E8);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.35)}',
+        '.badge{border:1px solid #919B9C;background:#FFF;color:#1A1A1A}',
+        '.input{border:1px solid #7F9DB9;background:#FFFFFF;color:#1A1A1A}',
+        '.track{height:8px;background:#FFF;border:1px solid #7F9DB9}',
+        '.switch{height:14px;background:#FFF;border:1px solid #7F9DB9}',
+        '.switch i{width:10px;height:10px;top:1px;left:1px;background:#245EDB}',
+        '.logo{background:linear-gradient(180deg,#5EA0FF,#0A58E8);border-radius:2px}'
+      ].join('\n')
+    },
+    terminal: {
+      vars: '--r-card:0px;--r-btn:0px;--r-input:0px;--r-chip:0px;',
+      decor: '<div class="log"><div><span class="prompt">$</span> style --check</div><div class="ok">[ok] tokens loaded</div><div><span class="prompt">$</span> <span class="cursor">_</span></div></div>',
+      css: [
+        '.card{background:transparent;box-shadow:none;border:1px solid var(--stroke)}',
+        '.title{color:var(--accent);text-shadow:0 0 8px var(--accent)}',
+        '.card-title{text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)}',
+        '.card-title::before{content:"> ";color:var(--accent)}',
+        '.btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-size:10px}',
+        '.btn.primary{background:var(--accent);color:var(--accent-text);box-shadow:0 0 8px var(--accent)}',
+        '.badge{border-color:var(--accent);color:var(--accent);background:transparent}',
+        '.track{height:8px;background:transparent;border:1px solid var(--stroke)}',
+        '.track i{background:var(--accent);box-shadow:0 0 8px var(--accent)}',
+        '.switch{background:transparent;border:1px solid var(--accent)}',
+        '.switch i{background:var(--accent);box-shadow:0 0 6px var(--accent)}',
+        '.input{background:transparent;border:1px solid var(--stroke)}',
+        '.logo{background:transparent;border:1px solid var(--accent);color:var(--accent)}',
+        '.hero .row,.hero .muted{display:none}',
+        '.log{margin-top:7px;font-size:10px;line-height:1.55;color:var(--text-2)}',
+        '.log .prompt,.log .ok{color:var(--accent)}',
+        '.cursor{display:inline-block;animation:blink 1s steps(1) infinite}',
+        '@keyframes blink{50%{opacity:0}}'
+      ].join('\n')
+    },
+    instrument: {
+      vars: '--r-card:6px;--r-btn:2px;--r-input:2px;--r-chip:2px;',
+      decor: '<div class="gauge"><i></i><b></b></div><div class="led-row"><span class="led"></span><span class="led dim"></span><span class="led"></span><span class="tag-label">SYS OK</span></div>',
+      css: [
+        '.card{background-image:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.10));border:2px solid var(--stroke-strong);box-shadow:inset 0 0 0 1px rgba(255,255,255,.10),inset 0 2px 10px rgba(0,0,0,.30)}',
+        '.card-title{text-transform:uppercase;letter-spacing:.10em;font-size:9.5px;color:var(--text-2)}',
+        '.btn{border:1px solid var(--stroke-strong);background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(0,0,0,.18));box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}',
+        '.btn.primary{background:var(--accent);color:var(--accent-text);box-shadow:0 0 10px rgba(255,176,0,.35)}',
+        '.badge{border-color:var(--accent);color:var(--accent);background:transparent}',
+        '.track{height:8px;background:rgba(0,0,0,.35);border:1px solid var(--stroke-strong)}',
+        '.track i{background:var(--accent);box-shadow:0 0 8px var(--accent)}',
+        '.input{background:rgba(0,0,0,.18);border:1px solid var(--stroke-strong)}',
+        '.switch{background:rgba(0,0,0,.35);border:1px solid var(--stroke-strong)}',
+        '.switch i{background:var(--accent);box-shadow:0 0 6px var(--accent)}',
+        '.hero .muted,.hero .row{display:none}',
+        '.gauge{position:relative;width:56px;height:56px;margin:7px auto 0;border-radius:50%;background:radial-gradient(circle at 50% 55%,rgba(255,255,255,.12),rgba(0,0,0,.50));border:2px solid var(--stroke-strong);box-shadow:inset 0 2px 7px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.10)}',
+        '.gauge::before{content:"";position:absolute;inset:5px;border-radius:50%;background:conic-gradient(from 210deg,var(--accent) 0 62deg,rgba(255,255,255,.10) 62deg 300deg,transparent 300deg);-webkit-mask:radial-gradient(circle,transparent 0 58%,#000 60%);mask:radial-gradient(circle,transparent 0 58%,#000 60%)}',
+        '.gauge i{position:absolute;left:50%;top:50%;width:2px;height:19px;background:var(--accent);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(40deg);box-shadow:0 0 6px var(--accent)}',
+        '.gauge b{position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:50%;background:var(--text);transform:translate(-50%,-50%);box-shadow:0 1px 2px rgba(0,0,0,.5)}',
+        '.led-row{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:7px}',
+        '.led{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}',
+        '.led.dim{background:var(--text-3);box-shadow:none}',
+        '.tag-label{font-size:8px;letter-spacing:.12em;color:var(--text-3);margin-left:2px}'
+      ].join('\n')
+    }
+  };
+
+  function buildSampleHtml(style) {
+    var mode = theme === 'light' ? 'light' : 'dark';
+    var profile = SAMPLE_PROFILES[style.key] || {};
+    var bg = styleToken(style, mode, ['Background', 'Surface', 'Panel background', 'Layout background']) || style.swatch[1];
+    var card = styleToken(style, mode, ['Card', 'Elevated card', 'Surface container', 'Panel']) || style.swatch[1];
+    var text = styleToken(style, mode, ['Primary text', 'Body text']) || style.swatch[0];
+    var text2 = styleToken(style, mode, ['Secondary text']) || text;
+    var text3 = styleToken(style, mode, ['Tertiary text', 'Muted text']) || text2;
+    var stroke = styleToken(style, mode, ['Stroke', 'Border', 'Outline', 'Separator', 'Panel border', 'Split line']) || 'rgba(128,128,128,.28)';
+    var strokeStrong = styleToken(style, mode, ['Strong stroke', 'Border', 'Outline']) || stroke;
+    var accent = styleToken(style, mode, ['Accent', 'Primary']) || style.swatch[0];
+    var accentText = styleToken(style, mode, ['Accent text', 'On primary']) || '#FFFFFF';
+    var hover = styleToken(style, mode, ['Hover']) || 'rgba(128,128,128,.12)';
+    var pressed = styleToken(style, mode, ['Pressed', 'Active']) || 'rgba(128,128,128,.20)';
+    var neuLight = styleToken(style, mode, ['Highlight']) || 'rgba(255,255,255,.85)';
+    var neuDark = styleToken(style, mode, ['Shadow']) || 'rgba(163,177,198,.65)';
+
+    var css = [
+      ':root{',
+      '--bg:' + bg + ';',
+      '--card:' + card + ';',
+      '--text:' + text + ';',
+      '--text-2:' + text2 + ';',
+      '--text-3:' + text3 + ';',
+      '--stroke:' + stroke + ';',
+      '--stroke-strong:' + strokeStrong + ';',
+      '--accent:' + accent + ';',
+      '--accent-text:' + accentText + ';',
+      '--hover:' + hover + ';',
+      '--pressed:' + pressed + ';',
+      '--neu-light:' + neuLight + ';',
+      '--neu-dark:' + neuDark + ';',
+      '--shadow:' + styleShadow(style) + ';',
+      '--r-card:8px;--r-btn:5px;--r-input:5px;--r-chip:999px;',
+      profile.vars || '',
+      '}',
+      '*{box-sizing:border-box}',
+      'html,body{height:100%}',
+      'body{margin:0;padding:10px 12px;overflow:hidden;background:var(--bg);color:var(--text);' +
+        'font-family:' + style.font + ';font-size:12px;line-height:1.45}',
+      '.app{height:100%;display:flex;flex-direction:column;gap:8px}',
+      '.top{display:flex;align-items:center;justify-content:space-between;gap:8px}',
+      '.brand{display:flex;align-items:center;gap:7px;min-width:0}',
+      '.logo{flex:0 0 auto;width:22px;height:22px;display:grid;place-items:center;border-radius:6px;' +
+        'background:var(--accent);color:var(--accent-text);font-size:11px;font-weight:700}',
+      '.title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+      '.sub{font-size:10px;color:var(--text-2)}',
+      '.badge{padding:2px 8px;border:1px solid var(--stroke-strong);border-radius:var(--r-chip);' +
+        'font-size:9.5px;color:var(--text-2);white-space:nowrap}',
+      '.grid{flex:1;min-height:0;display:grid;grid-template-columns:1.1fr 1fr;gap:8px}',
+      '.card{min-height:0;padding:9px 10px;overflow:hidden;background:var(--card);border:1px solid var(--stroke);' +
+        'border-radius:var(--r-card);box-shadow:var(--shadow)}',
+      '.card-title{font-size:11.5px;font-weight:600;margin-bottom:2px}',
+      '.muted{margin-bottom:6px;font-size:10px;color:var(--text-3)}',
+      '.track{height:5px;margin-bottom:7px;border-radius:999px;background:var(--stroke);overflow:hidden}',
+      '.track i{display:block;width:64%;height:100%;border-radius:inherit;background:var(--accent)}',
+      '.row{display:flex;flex-wrap:wrap;align-items:center;gap:5px}',
+      '.btn{height:24px;padding:0 9px;border:1px solid var(--stroke-strong);border-radius:var(--r-btn);' +
+        'background:transparent;color:var(--text);font:inherit;font-size:10.5px;cursor:pointer;' +
+        'transition:background-color .12s ease,box-shadow .12s ease,transform .12s ease}',
+      '.btn:hover{background:var(--hover)}',
+      '.btn:active{background:var(--pressed);transform:translateY(.5px)}',
+      '.btn.primary{background:var(--accent);border-color:transparent;color:var(--accent-text);font-weight:600}',
+      '.btn.primary:hover{background:var(--accent);filter:brightness(1.07)}',
+      '.btn.ghost{border-color:transparent;background:transparent;color:var(--text-2)}',
+      '.field{display:block;margin-bottom:6px;font-size:9.5px;color:var(--text-2)}',
+      '.input{margin-top:3px;height:24px;padding:0 7px;border:1px solid var(--stroke-strong);' +
+        'border-radius:var(--r-input);background:var(--card);color:var(--text);font-size:10.5px;line-height:22px}',
+      '.switch-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:10px;color:var(--text-2)}',
+      '.switch{position:relative;display:inline-block;width:32px;height:16px;border-radius:999px;background:var(--stroke-strong)}',
+      '.switch i{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;' +
+        'background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transform:translateX(16px)}',
+      '.chips{display:flex;gap:5px}',
+      '.chip{padding:1px 8px;border:1px solid var(--stroke-strong);border-radius:var(--r-chip);' +
+        'font-size:9.5px;color:var(--text-2)}',
+      '.chip.active{background:var(--accent);border-color:transparent;color:var(--accent-text)}',
+      profile.css || ''
+    ].join('\n');
+
+    var chrome = profile.chrome
+      ? '<div class="chrome"><span class="chrome-title">' + style.name + '</span>' +
+        '<span class="chrome-btns"><i>_</i><i>□</i><i>×</i></span></div>'
+      : '';
+
+    var body = [
+      profile.backdrop || '',
+      '<div class="app">',
+      chrome,
+      '<header class="top">',
+      '<div class="brand"><span class="logo">' + style.short.charAt(0) + '</span>',
+      '<div><div class="title">' + style.name + '</div>',
+      '<div class="sub">Secondary text · Tertiary text</div></div></div>',
+      '<span class="badge">' + style.short + '</span>',
+      '</header>',
+      '<main class="grid">',
+      '<section class="card hero">',
+      '<div class="card-title">Overview</div>',
+      '<div class="muted">Accent, stroke and surface tokens.</div>',
+      '<div class="track"><i></i></div>',
+      '<div class="row"><button class="btn primary">Primary</button>' +
+        '<button class="btn">Secondary</button><button class="btn ghost">Ghost</button></div>',
+      profile.decor || '',
+      '</section>',
+      '<section class="card">',
+      '<div class="card-title">Controls</div>',
+      '<label class="field">Input<div class="input">Sample value</div></label>',
+      '<div class="switch-row"><span class="switch"><i></i></span> Enabled</div>',
+      '<div class="chips"><span class="chip active">Chip</span><span class="chip">Tag</span></div>',
+      '</section>',
+      '</main>',
+      '</div>'
+    ].join('');
+
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8"><style>' + css +
+      '</style></head><body>' + body + '</body></html>';
+  }
+
+  function renderSample() {
+    sampleHintEl.textContent = currentStyle.name;
+    sampleFrame.srcdoc = buildSampleHtml(currentStyle);
+  }
+
+  function renderStyleList() {
+    styleListEl.innerHTML = STYLES.map(function (style) {
+      var active = style.key === currentStyle.key ? ' active' : '';
+      return '<button class="style-item' + active + '" data-key="' + style.key + '">' +
+        '<span class="style-meta"><span class="style-name">' + style.name + '</span>' +
+        '<span class="style-sub">' + styleVendor(style) + '</span></span>' +
+        '<span class="swatches">' + style.swatch.map(function (color) {
+          return '<i style="background:' + color + '"></i>';
+        }).join('') + '</span></button>';
+    }).join('');
+    styleHintEl.textContent = t('count', { n: STYLES.length });
+    renderSample();
+  }
+
+  function renderFrameworkList() {
+    fwListEl.innerHTML = FRAMEWORKS.map(function (framework) {
+      var active = framework.key === currentFramework.key ? ' active' : '';
+      return '<button class="fw-item' + active + '" data-key="' + framework.key + '" title="' +
+        framework.name + '">' + framework.file + '</button>';
+    }).join('');
+    fwHintEl.textContent = t('count', { n: FRAMEWORKS.length });
+  }
+
+  function regenerate() {
+    generated = buildMarkdown(currentStyle, currentFramework);
+    currentFileName = currentStyle.file + '-App-Generator-Skill.md';
+    fileNameEl.textContent = currentFileName;
+    mdViewEl.innerHTML = renderMarkdown(generated);
+    mdSourceEl.textContent = generated;
+    previewPane.scrollTop = 0;
+    sourcePane.scrollTop = 0;
+  }
+
+  /* ---------------- 交互 ---------------- */
+  var lastTitleDown = 0;
+  var dragPointerId = null;
+
+  function endTitleDrag() {
+    if (dragPointerId === null) {
+      return;
+    }
+    dragPointerId = null;
+    post({ type: 'window', action: 'dragEnd' });
+  }
+
+  document.getElementById('dragArea').addEventListener('pointerdown', function (event) {
+    if (event.button !== 0) { return; }
+
+    var now = Date.now();
+    if (now - lastTitleDown < 380) {
+      lastTitleDown = 0;
+      post({ type: 'window', action: 'max' });
+      return;
+    }
+    lastTitleDown = now;
+
+    dragPointerId = event.pointerId;
+    try {
+      document.getElementById('dragArea').setPointerCapture(event.pointerId);
+    } catch (err) {
+      /* 指针捕获失败时仍依赖 move 事件 */
+    }
+    post({ type: 'window', action: 'dragStart' });
+  });
+
+  document.getElementById('dragArea').addEventListener('pointermove', function (event) {
+    if (dragPointerId === null || event.pointerId !== dragPointerId) { return; }
+    post({ type: 'window', action: 'dragMove' });
+  });
+
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (name) {
+    document.getElementById('dragArea').addEventListener(name, endTitleDrag);
+  });
+
+  document.getElementById('minBtn').addEventListener('click', function () {
+    post({ type: 'window', action: 'min' });
+  });
+
+  document.getElementById('maxBtn').addEventListener('click', function () {
+    post({ type: 'window', action: 'max' });
+  });
+
+  document.getElementById('closeBtn').addEventListener('click', function () {
+    post({ type: 'window', action: 'close' });
+  });
+
+  /* 使用说明弹窗 */
+  var howOverlay = document.getElementById('howOverlay');
+
+  function openHowToUse() {
+    howOverlay.classList.remove('hidden');
+    document.getElementById('howOkBtn').focus();
+  }
+
+  function closeHowToUse() {
+    if (howOverlay.classList.contains('hidden')) {
+      return;
+    }
+    howOverlay.classList.add('hidden');
+    document.getElementById('howBtn').focus();
+  }
+
+  document.getElementById('howBtn').addEventListener('click', openHowToUse);
+  document.getElementById('howOkBtn').addEventListener('click', closeHowToUse);
+  document.getElementById('howCloseBtn').addEventListener('click', closeHowToUse);
+  howOverlay.addEventListener('click', function (event) {
+    if (event.target === howOverlay) {
+      closeHowToUse();
+    }
+  });
+
+  /* 关于弹窗 */
+  var aboutOverlay = document.getElementById('aboutOverlay');
+
+  function openAbout() {
+    aboutOverlay.classList.remove('hidden');
+    document.getElementById('aboutOkBtn').focus();
+  }
+
+  function closeAbout() {
+    if (aboutOverlay.classList.contains('hidden')) {
+      return;
+    }
+    aboutOverlay.classList.add('hidden');
+    document.getElementById('aboutBtn').focus();
+  }
+
+  document.getElementById('aboutBtn').addEventListener('click', openAbout);
+  document.getElementById('aboutOkBtn').addEventListener('click', closeAbout);
+  document.getElementById('aboutCloseBtn').addEventListener('click', closeAbout);
+  aboutOverlay.addEventListener('click', function (event) {
+    if (event.target === aboutOverlay) {
+      closeAbout();
+    }
+  });
+
+  themeBtn.addEventListener('click', function () {
+    var next = theme === 'light' ? 'dark' : 'light';
+    setTheme(next);
+    post({ type: 'theme', theme: next });
+  });
+
+  document.getElementById('sampleToggle').addEventListener('click', function () {
+    var collapsed = sampleBoxEl.classList.toggle('collapsed');
+    this.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  });
+
+  styleListEl.addEventListener('click', function (event) {
+    var target = event.target.closest('.style-item');
+    if (!target) { return; }
+    var key = target.getAttribute('data-key');
+    var style = STYLES.find(function (item) { return item.key === key; });
+    if (!style || style.key === currentStyle.key) { return; }
+    currentStyle = style;
+    renderStyleList();
+    regenerate();
+  });
+
+  fwListEl.addEventListener('click', function (event) {
+    var target = event.target.closest('.fw-item');
+    if (!target) { return; }
+    var key = target.getAttribute('data-key');
+    var framework = FRAMEWORKS.find(function (item) { return item.key === key; });
+    if (!framework || framework.key === currentFramework.key) { return; }
+    currentFramework = framework;
+    renderFrameworkList();
+    regenerate();
+  });
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (item) { item.classList.remove('active'); });
+      tab.classList.add('active');
+      var isSource = tab.getAttribute('data-tab') === 'source';
+      previewPane.classList.toggle('hidden', isSource);
+      sourcePane.classList.toggle('hidden', !isSource);
+    });
+  });
+
+  document.getElementById('regenBtn').addEventListener('click', function () {
+    regenerate();
+    showToast(t('toastRegen'));
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', async function () {
+  try {
+    await navigator.clipboard.writeText(generated);
+    showToast("Copied Markdown");
+  } catch(err) {
+    const ta = document.createElement('textarea');
+    ta.value = generated;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast("Copied Markdown");
+  }
+});
+
+
+  document.getElementById('saveBtn').addEventListener('click', doSave);
+
+  function doSave() {
+    post({ type: 'save', text: generated, fileName: currentFileName });
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      doSave();
+    } else if (event.key === 'Escape') {
+      closeHowToUse();
+      closeAbout();
+    }
+  });
+
+  /* ---------------- 宿主消息 ---------------- */
+  // 界面语言：默认英文，可在标题栏切换
+  language = 'en-US';
+  setTheme('light'); 
+  initLanguageSelect();
+  applyLanguage(language);
+
+  if (host) {
+    host.addEventListener('message', function (event) {
+      var data = event.data;
+      if (!data || !data.type) { return; }
+
+      if (data.type === 'init') {
+        baseMarkdown = data.baseSkill || '';
+        applyLanguage(I18N[data.language] ? data.language : 'en-US');
+        setTheme('light');
+        setMaximized(!!data.maximized);
+        renderStyleList();
+        renderFrameworkList();
+        regenerate();
+      } else if (data.type === 'theme') {
+        setTheme('light');
+      } else if (data.type === 'windowState') {
+        setMaximized(!!data.maximized);
+      } else if (data.type === 'toast') {
+        showToast(data.text || '', data.kind);
+      }
+    });
+  } else {
+    renderStyleList();
+    renderFrameworkList();
+    regenerate();
+    showToast(t('toastNoHost'), 'error');
+  }
+
+  // 首帧绘制后再加入场动画类，保证动画可见
+  window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(function () {
+      document.querySelector('.app').classList.add('revealed');
+    });
+  });
+
+  post({ type: 'ready' });
+})();
+</script>
+</body>
+</html>
